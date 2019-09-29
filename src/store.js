@@ -5,7 +5,7 @@ import axios from 'axios'
 Vue.use(Vuex)
 
 // setting up the endpoint !!!!!!!
-axios.defaults.baseURL = 'http://authapi.arentus/api'
+axios.defaults.baseURL = process.env.VUE_APP_API_ENDPOINT;
  
 export default new Vuex.Store({
   state: {

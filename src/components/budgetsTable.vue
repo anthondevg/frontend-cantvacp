@@ -65,6 +65,7 @@
 
 
 		</table>
+		
 		<nav aria-label="Page navigation example">
 		  <ul class="pagination justify-content-center">
 		    <li class="page-item disabled">
@@ -97,7 +98,7 @@
 	import axios from 'axios'
 	
 	// setting up the endpoint !!!!!!!
-	axios.defaults.baseURL = 'http://authapi.arentus/api'
+	axios.defaults.baseURL = process.env.VUE_APP_API_ENDPOINT;
  	
 	export default {
 		name: 'budgetsTable',
