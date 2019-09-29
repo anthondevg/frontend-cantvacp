@@ -7,4 +7,5 @@
 
 <script>
 	alert(process.env.VUE_APP_TITLE);
+	alert(process.env.VUE_APP_API_ENDPOINT);
 </script>
