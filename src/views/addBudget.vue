@@ -81,7 +81,7 @@
 			    <div class="col-md-3 mb-3">
 			      <label>Descuento RPS</label>
 
-			      <input type="number" name="descRPS" v-model="descRPS" class="form-control" placeholder="0. BsS" value="0" required>
+			      <input type="number" name="descRPS" v-model="descRPS" disabled class="form-control" placeholder="0. BsS" value="0" required>
 
 			    </div>
 
@@ -118,7 +118,7 @@
 		name: 'newBudget',
 		data() {
 			return {
-				userId: '12',
+				userId: this.$store.getters.user_id,
 				nroOrder: '',
 				nroInvoice: '',
 				totalAmount: 0,
@@ -133,17 +133,18 @@
 			}
 		},
 		created: function(){
-			axios.get('/type')
-				.then(res=>{
-					var today = new Date();
-					var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-					this.date = date;
-					this.type = res.data[0].code
-					this.types = res.data
-				})
-				.catch(err=>{
-					console.log(err)
-				})
+			axios.get(`/type/id/${this.$store.getters.user_id}`)
+			  .then(res=> {
+			    // handle success
+
+				this.type = res.data[0].code
+			    this.types = res.data;
+			    console.log(res.data);
+			  })
+			  .catch(function (error) {
+			    // handle error
+			    console.log(error);
+			  })
 
 		},
 		methods: {

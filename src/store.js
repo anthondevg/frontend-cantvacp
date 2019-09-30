@@ -15,7 +15,9 @@ export default new Vuex.Store({
     // aqui guardaremos la data de los presupuestos (Presupuestos[])
     globalBudgets: [],
     budgets: [],
-    globalTotal: 0
+    globalTotal: 0,
+    user_id: localStorage.getItem('user_id') || null,
+    types: 'nah'
   },
   mutations: {
   	// we cannot update the state directly 
@@ -27,15 +29,24 @@ export default new Vuex.Store({
       state.token = null 
     },
     fetchBudgets(state){
-
-      axios.get('/budget/getAll')
-           .then(res=>{
-              state.globalBudgets = res.data;
-              state.budgets = res.data;
-           })
-           .catch(err=>{
-              console.log('ERROR FETCHING BUDGETS',err)
-           })
+      axios.get(`/budget/getAll/id/${state.user_id}`)
+       .then(res=>{
+          state.globalBudgets = res.data;
+          state.budgets = res.data;
+       })
+       .catch(err=>{
+          console.log('ERROR FETCHING BUDGETS',err)
+       })
+    },
+    fetchTypes(state){
+       axios.get(`/type/id/${state.user_id}`)
+        .then(res => {
+            console.log('SUCCESS ',res.data)
+            state.types = res.data;
+        })
+        .catch(function (error) {
+          console.log('Error fetching types',error);
+        })
     },
     fetchBudgetsFromTo(state,data){
       let fromMl = Date.parse(data.from);
@@ -51,6 +62,11 @@ export default new Vuex.Store({
       })
       
       state.budgets = filteredBudgets;
+    },
+    retrieveUserData(state,data){
+
+      localStorage.setItem('user_id',data[0].id);
+      state.user_id = data[0].id;
     }
   },
   getters: {
@@ -59,6 +75,12 @@ export default new Vuex.Store({
     },
     budgets(state){
       return state.budgets
+    },
+    user_id(state){
+      return state.user_id
+    },
+    types(state){
+      return state.types
     }
   },
   actions: {
@@ -117,12 +139,20 @@ export default new Vuex.Store({
     			password: credentials.password ,
     		})
     		.then(res=>{
-    			const token = res.data.access_token;
+          const auth_data = JSON.parse(res.data.auth_data);
+    			const token = auth_data.access_token;
+
     			localStorage.setItem('access_token',token);
+
     			context.commit('retrieveToken',token);
+          context.commit('retrieveUserData',res.data.user_data);
+
           resolve(res);
+
     			console.log(res);
-    		})
+          console.log(res.data.user_data[0].id);
+    		  console.log(JSON.parse(res.data.auth_data));
+        })
     		.catch(error=>{
           reject(error)
     			console.log(error);
@@ -132,6 +162,9 @@ export default new Vuex.Store({
     // Budgets actions
     fetchBudgets(context){
       context.commit('fetchBudgets')
+    },
+    fetchTypes(context){
+      context.commit('fetchTypes')
     },
     fetchBudgetsFromTo(context,data){
       context.commit('fetchBudgetsFromTo',data);

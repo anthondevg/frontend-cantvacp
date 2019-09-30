@@ -26,7 +26,7 @@
 		data() {
 
 			return {
-				userId: 1,
+				userId: this.$store.getters.user_id,
 				code: this.makeid(10),
 				name: ''
 			}

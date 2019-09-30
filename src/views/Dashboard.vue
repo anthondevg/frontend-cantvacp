@@ -4,7 +4,7 @@
 	<!-- incluir seccion de ayuda de atajos -->
 	
 	<div class="row card mt-2 p-2">
-		<div class="p-2 mb-2"><h1>Panel de Control</h1></div>
+		<div class="p-2 mb-2"><h1>Panel de Control Bienvenido {{ userId }}</h1></div>
 		
 		<div class="p-3" style="display: flex; flex-direction: row; ">
 			
@@ -15,7 +15,9 @@
 			<router-link to="/nuevo/tipo" class="btn btn-success">Agregar Tipo +</router-link>
 		</div>
 	</div>
+
 	<budgetsTable/>
+  	
   </div>
 </template>
 
@@ -27,6 +29,11 @@
 		name: 'Dashboard',
 		components: {
 			budgetsTable
+		},
+		computed: {
+			userId() {
+				return this.$store.getters.user_id;
+			}
 		}
 	}
 </script>

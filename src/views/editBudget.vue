@@ -155,15 +155,18 @@
 				console.log(err)
 			})
 
-			axios.get('/type')
-				.then(res=>{
-				
-					this.type = res.data[0].code
-					this.types = res.data
-				})
-				.catch(err=>{
-					console.log(err)
-				})
+			axios.get(`/type/id/${this.$store.getters.user_id}`)
+			  .then(res=> {
+			    // handle success
+
+				this.type = res.data[0].code
+			    this.types = res.data;
+			    console.log(res.data);
+			  })
+			  .catch(function (error) {
+			    // handle error
+			    console.log(error);
+			  })
 		},
 		methods: {
 			calculateData(){

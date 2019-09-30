@@ -1,6 +1,14 @@
 <template>
-	
+
+
 	<div class="row p-4 mb-4 mt-2 card">
+	<vuetable ref="vuetable"
+    api-url="http://authapi.arentus/api/budget/getAll"
+    :fields="['nroInvoice', 'nroOrder', 'description', 'date','status','type','totalAmount','DRSE','DEPS','totalIncome']"
+    data-path="http://authapi.arentus/api/budget/getAll"
+    pagination-path="http://authapi.arentus/api/budget/getAll"
+  ></vuetable>
+
 		<div class="card p-2 mb-2">
 				
 			<label for="">Filtrar: </label>
@@ -22,7 +30,8 @@
 			<button class="btn btn-small btn-danger">PDF</button>
 			<button class="btn btn-small btn-success">Excel</button>
 		</div>
-		<table class="table  mb-3 table-striped table-hover table-dark table-responsive">
+
+		<table id="myTable" class="table mb-3 table-striped table-hover table-dark table-responsive">
 		  <thead>
 		    <tr style="text-align: center;" >
 		      <th scope="col">#</th>
@@ -96,7 +105,8 @@
 <script>
 	
 	import axios from 'axios'
-	
+	import Vuetable from 'vuetable-2'
+
 	// setting up the endpoint !!!!!!!
 	axios.defaults.baseURL = process.env.VUE_APP_API_ENDPOINT;
  	
@@ -162,17 +172,28 @@
 				});
 			}
 		},
-
+		components: {
+		    Vuetable
+		},
 		created: function(){
-			axios.get('/type')
-				.then(res=>{
-					this.types = res.data
-				})
-				.catch(err=>{
-					console.log(err)
-				})
+			
+			axios.get(`/type/id/${this.$store.getters.user_id}`)
+			  .then(res=> {
+			    // handle succes
+			    this.types = res.data;
+			    console.log(res.data);
+			  })
+			  .catch(function (error) {
+			    // handle error
+			    console.log(error);
+			  })
 
+			/*this.$store.dispatch('fetchTypes');
+
+			this.types = this.$store.getters.types;
+			*/
 			this.$store.dispatch('fetchBudgets');
 		}
 	}
+
 </script>
