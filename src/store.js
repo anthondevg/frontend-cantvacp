@@ -14,10 +14,16 @@ export default new Vuex.Store({
 
     // aqui guardaremos la data de los presupuestos (Presupuestos[])
     globalBudgets: [],
+    // local budgets para cuando se consultan por fecha
     budgets: [],
+    // ganancia total de budgets
     globalTotal: 0,
+    // el id del usuario 
     user_id: localStorage.getItem('user_id') || null,
-    types: 'nah'
+    // no funciona esto todavia
+    types: 'nah',
+
+    // 
   },
   mutations: {
   	// we cannot update the state directly 
@@ -28,15 +34,11 @@ export default new Vuex.Store({
     destroyToken(state){
       state.token = null 
     },
-    fetchBudgets(state){
-      axios.get(`/budget/getAll/id/${state.user_id}`)
-       .then(res=>{
-          state.globalBudgets = res.data;
-          state.budgets = res.data;
-       })
-       .catch(err=>{
-          console.log('ERROR FETCHING BUDGETS',err)
-       })
+    fetchGlobalBudgets(state,data){
+      state.globalBudgets = data;
+    },
+    fetchBudgets(state,data){
+      state.budgets = data;
     },
     fetchTypes(state){
        axios.get(`/type/id/${state.user_id}`)
@@ -159,9 +161,26 @@ export default new Vuex.Store({
     		})
       })
   	},
+
     // Budgets actions
-    fetchBudgets(context){
-      context.commit('fetchBudgets')
+    fetchGlobalBudgets(context){
+      axios.get(`/budget/getAll`)
+       .then(res=>{
+          context.commit('fetchGlobalBudgets',res.data)
+       })
+       .catch(err=>{
+          console.log('ERROR FETCHING GLOBAL BUDGETS',err)
+       })
+    }, 
+    fetchBudgets(context,data){
+      return axios.get(`/budget/getAll/id/${this.state.user_id}?page=${data.currentPage}`)
+       .then(res=>{
+          context.commit('fetchBudgets',res.data.data)
+          return res.data;
+       })
+       .catch(err=>{
+          console.log('ERROR FETCHING BUDGETS',err)
+       })
     },
     fetchTypes(context){
       context.commit('fetchTypes')

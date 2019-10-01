@@ -2,12 +2,6 @@
 
 
 	<div class="row p-4 mb-4 mt-2 card">
-	<vuetable ref="vuetable"
-    api-url="http://authapi.arentus/api/budget/getAll"
-    :fields="['nroInvoice', 'nroOrder', 'description', 'date','status','type','totalAmount','DRSE','DEPS','totalIncome']"
-    data-path="http://authapi.arentus/api/budget/getAll"
-    pagination-path="http://authapi.arentus/api/budget/getAll"
-  ></vuetable>
 
 		<div class="card p-2 mb-2">
 				
@@ -26,12 +20,36 @@
 				</form>
 			</div>
 		</div>
+		<div class="card p-3 mb-2">
+			<h3 class="text-success">Ganancia Total </h3>
+			<p>
+				Bolivares Soberanos <small class="text-danger">{{ incomeGlobalTotal }} BsS</small>
+				<br>
+				 <small class="text-primary">USD:(DolarToday) ${{ totalInDollars }} </small>
+				 <br>
+				 <small class="text-primary">USD:(AirTM) ${{ totalInDollarsAirTM }} </small>
+			</p>
+		</div>
 		<div class="card" style="display: flex; flex-direction: row-reverse; ">
 			<button class="btn btn-small btn-danger">PDF</button>
 			<button class="btn btn-small btn-success">Excel</button>
 		</div>
+		
+		<nav aria-label="Page navigation example">
+		  <ul class="pagination justify-content-center">
+		    <li class="page-item disabled">
+		      <a class="page-link" href="#" tabindex="-1">Previous</a>
+		    </li>
 
+		    <li v-for="n in lastPage" v-on:click="fetchBudgetFromPage(n)" class="page-item"><button class="page-link">{{n}}</button></li>
+
+		    <li class="page-item">
+		      <a class="page-link" href="#">Next</a>
+		    </li>
+		  </ul>
+		</nav>
 		<table id="myTable" class="table mb-3 table-striped table-hover table-dark table-responsive">
+
 		  <thead>
 		    <tr style="text-align: center;" >
 		      <th scope="col">#</th>
@@ -80,25 +98,15 @@
 		    <li class="page-item disabled">
 		      <a class="page-link" href="#" tabindex="-1">Previous</a>
 		    </li>
-		    <li class="page-item"><a class="page-link" href="#">1</a></li>
-		    <li class="page-item"><a class="page-link" href="#">2</a></li>
-		    <li class="page-item"><a class="page-link" href="#">3</a></li>
+
+		    <li v-for="n in lastPage" v-on:click="fetchBudgetFromPage(n)" class="page-item"><button class="page-link">{{n}}</button></li>
+
 		    <li class="page-item">
 		      <a class="page-link" href="#">Next</a>
 		    </li>
 		  </ul>
 		</nav>
 		
-		<div class="card p-3 mb-2">
-			<h3 class="text-success">Ganancia Total </h3>
-			<p>
-				Bolivares Soberanos <small class="text-danger">{{ incomeGlobalTotal }} BsS</small>
-				<br>
-				 <small class="text-primary">USD:(DolarToday) ${{ totalInDollars }} </small>
-				 <br>
-				 <small class="text-primary">USD:(AirTM) ${{ totalInDollarsAirTM }} </small>
-			</p>
-		</div>
 	</div>
 </template>
 
@@ -117,7 +125,9 @@
 				type: 'ALL', //SELECTED TYPE
 				types: [],
 				from: '',
-				to: ''
+				to: '',
+				currentPage: 1,
+				lastPage: ''
 			}
 		},
 		computed: {
@@ -170,6 +180,17 @@
 					from: this.from,
 					to: this.to
 				});
+			},
+			fetchBudgetFromPage(page){
+				console.log('fetching budgets from page '+page);
+
+				this.currentPage = page;
+				this.$store.dispatch('fetchBudgets',{
+					currentPage: this.currentPage
+				})
+				.then(res=>{
+					console.log(res);
+				});
 			}
 		},
 		components: {
@@ -181,7 +202,7 @@
 			  .then(res=> {
 			    // handle succes
 			    this.types = res.data;
-			    console.log(res.data);
+			    console.log('SUCCESS',res.data);
 			  })
 			  .catch(function (error) {
 			    // handle error
@@ -192,7 +213,17 @@
 
 			this.types = this.$store.getters.types;
 			*/
-			this.$store.dispatch('fetchBudgets');
+
+			// request the budgets for the current page
+			this.$store.dispatch('fetchGlobalBudgets');
+			this.$store.dispatch('fetchBudgets',{
+				currentPage: this.currentPage
+			})
+			.then(res=>{
+				console.log(res);
+				this.lastPage = res.last_page;
+				console.log(res.last_page);
+			});
 		}
 	}
 
