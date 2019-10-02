@@ -1,26 +1,66 @@
 <template>
+	
 
+	<div class="row p-4 mb-4 mt-2">
+			<div class="columns">
+		<div class="column">
+			
+			<b-field label="Filtrar por">
+	            <b-select 
+	            	
+	            	size="is-medium" 
+	            	expanded 
+	            	placeholder="CANTV" 
+	            	@change="onChange($event)" 
+	            	v-model="type" 
+	            	icon="earth">
+	            	<option value="ALL">Todo</option>
+	            	<option v-for="type in types" v-bind:value="type.code">{{type.name}}</option>
+	            </b-select>
+	        </b-field>
+		
+		</div>
 
-	<div class="row p-4 mb-4 mt-2 card">
+		<!--<div class="column">
+			
+			
+		    <b-field label="Fecha">
+		        <b-datepicker
+		        	size="is-medium" 
+		            placeholder="Escribe o selecciona una fecha..."
+		            icon="calendar-today"
+		            editable>
+		        </b-datepicker>
+		    </b-field>
+			
+		</div>-->
 
-		<div class="card p-2 mb-2">
-				
-			<label for="">Filtrar: </label>
-
-			<select name="type" @change="onChange($event)" v-model="type" style="width: 40%" class="form-control mb-2">
-				<option value="ALL">Todo</option>
-				<option v-for="type in types" v-bind:value="type.code">{{type.name}}</option>
-			</select>
-			Fecha
-			<div class="p-2 mb-2" >
+		<div class="column">
+			<template>
+			    <b-field label="Select a date">
+			        <b-datepicker
+			        	@input="fetchBudgetsFromTo"
+			         	size="is-medium" 
+			            placeholder="Click to select..."
+			            v-model="dates"
+			            icon="calendar-today"
+			            range>
+			        </b-datepicker>
+			    </b-field>
+			</template>
+		</div>
+		
+			<!--<div class="p-2 mb-2" >
 				<form action="" style="display: flex; flex-direction: row;" @submit.prevent="fetchBudgetsFromTo">
 					<input type="date" required v-model="from" class="form-control" style="width: 30%;">
 					<input type="date" required v-model="to" class="form-control" style="width: 30%;">
 					<input type="submit" class="btn btn-sm ml-2 btn-small btn-success" value="GO" style="width: 20%">
 				</form>
-			</div>
-		</div>
-		<div class="card p-3 mb-2">
+			</div>-->
+	</div>
+
+	
+		<div class="p-3 mb-2">
 			<h3 class="text-success">Ganancia Total </h3>
 			<p>
 				Bolivares Soberanos <small class="text-danger">{{ incomeGlobalTotal }} BsS</small>
@@ -30,29 +70,12 @@
 				 <small class="text-primary">USD:(AirTM) ${{ totalInDollarsAirTM }} </small>
 			</p>
 		</div>
-		<div class="card" style="display: flex; flex-direction: row-reverse; ">
-			<button class="btn btn-small btn-danger">PDF</button>
-			<button class="btn btn-small btn-success">Excel</button>
-		</div>
-		
-		<nav aria-label="Page navigation example">
-		  <ul class="pagination justify-content-center">
-		    <li class="page-item disabled">
-		      <a class="page-link" href="#" tabindex="-1">Previous</a>
-		    </li>
 
-		    <li v-for="n in lastPage" v-on:click="fetchBudgetFromPage(n)" class="page-item"><button class="page-link">{{n}}</button></li>
-
-		    <li class="page-item">
-		      <a class="page-link" href="#">Next</a>
-		    </li>
-		  </ul>
-		</nav>
-		<table id="myTable" class="table mb-3 table-striped table-hover table-dark table-responsive">
+		<table style="width: 100%;" class="table mb-3 center is-striped">
 
 		  <thead>
-		    <tr style="text-align: center;" >
-		      <th scope="col">#</th>
+		    <tr>
+		      
 		      <th scope="col">Nro Pedido</th>
 		      <th scope="col">Nro Factura</th>
 		      <th scope="col">Monto</th>
@@ -69,9 +92,8 @@
 		    </tr>
 		  </thead>
 		  <tbody>
-		    <tr style="text-align: center;" v-bind:value="budget.id" v-for="budget in budgets" v-if="budget.type == type || type == 'ALL'">
+		    <tr v-bind:value="budget.id" v-for="budget in budgets" v-if="budget.type == type || type == 'ALL'">
 
-		    	<td>{{ budget.id}}</td>
 		    	<td>{{ budget.nroOrder}}</td>
 		    	<td>{{ budget.nroInvoice}}</td>
 		    	<td>{{ budget.totalAmount}}</td>
@@ -84,30 +106,36 @@
 		    	<td>{{ budget.DEPS}}</td>
 		    	<td>{{ budget.totalIncome}}</td>
 		    	<td>
-		    		<router-link :to="{ name: 'presupuesto', params: {id: budget.id}}" class="btn btn-sm btn-success">Editar</router-link>
-		    		<button class="btn btn-danger btn-sm" v-on:click="deleteBudget(budget.id)">Borrar</button>
+		    		<b-button 
+		    			tag="router-link"
+		    			:to="{ name: 'presupuesto', params: {id: budget.id}}" 
+		    			type="is-link"
+                		icon-right="pencil" />
+
+		    		<b-button type="is-danger" icon-right="delete" v-on:click="deleteBudget(budget.id)" />
 		    	</td>		    	
 		    </tr>
 		  </tbody>
 
 
 		</table>
-		
-		<nav aria-label="Page navigation example">
-		  <ul class="pagination justify-content-center">
-		    <li class="page-item disabled">
-		      <a class="page-link" href="#" tabindex="-1">Previous</a>
-		    </li>
 
-		    <li v-for="n in lastPage" v-on:click="fetchBudgetFromPage(n)" class="page-item"><button class="page-link">{{n}}</button></li>
+		<b-pagination
+			v-on:click.native="fetchBudgetFromPage(current)"
+            :total="total"
+            :current.sync="current"
+            :range-before="rangeBefore"
+            :range-after="rangeAfter"
+            :order="order"
+            :size="size"
+            :per-page="perPage"
+            aria-next-label="Next page"
+            aria-previous-label="Previous page"
+            aria-page-label="Page"
+            aria-current-label="Current page">
+        </b-pagination>
 
-		    <li class="page-item">
-		      <a class="page-link" href="#">Next</a>
-		    </li>
-		  </ul>
-		</nav>
-		
-	</div>
+    </div>
 </template>
 
 <script>
@@ -126,8 +154,16 @@
 				types: [],
 				from: '',
 				to: '',
-				currentPage: 1,
-				lastPage: ''
+				lastPage: '',
+				dates: [],
+				// state for pagination
+                total: '',
+                current: 1,
+                perPage: 8,
+                rangeBefore: 3,
+                rangeAfter: 4,
+                order: 'is-centered',
+                size: 'size'
 			}
 		},
 		computed: {
@@ -155,6 +191,9 @@
 			onChange(event){
 				console.log(event.target.value)
 			},
+			test(){
+				alert('work')
+			},
 			deleteBudget(id){
 
 				if(window.confirm('Estas seguro?')){
@@ -176,6 +215,14 @@
 			fetchBudgetsFromTo(){
 				console.log('get budgets')
 
+				
+				let from = this.dates[0].getFullYear() + "-" + (this.dates[0].getMonth() + 1) + "-" + this.dates[0].getDate();
+
+				let to = this.dates[1].getFullYear() + "-" + (this.dates[1].getMonth() + 1) + "-" + this.dates[1].getDate();
+
+				this.from = from;
+				this.to = to;
+				
 				this.$store.dispatch('fetchBudgetsFromTo',{
 					from: this.from,
 					to: this.to
@@ -184,9 +231,9 @@
 			fetchBudgetFromPage(page){
 				console.log('fetching budgets from page '+page);
 
-				this.currentPage = page;
+				this.current = page;
 				this.$store.dispatch('fetchBudgets',{
-					currentPage: this.currentPage
+					currentPage: this.current
 				})
 				.then(res=>{
 					console.log(res);
@@ -217,11 +264,11 @@
 			// request the budgets for the current page
 			this.$store.dispatch('fetchGlobalBudgets');
 			this.$store.dispatch('fetchBudgets',{
-				currentPage: this.currentPage
+				currentPage: this.current
 			})
 			.then(res=>{
 				console.log(res);
-				this.lastPage = res.last_page;
+				this.total = res.total;
 				console.log(res.last_page);
 			});
 		}

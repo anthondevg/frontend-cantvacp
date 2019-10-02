@@ -3,17 +3,32 @@
 
 	<!-- incluir seccion de ayuda de atajos -->
 	
-	<div class="row card mt-2 p-2">
-		<div class="p-2 mb-2"><h1>Panel de Control Bienvenido {{ userId }}</h1></div>
-		
-		<div class="p-3" style="display: flex; flex-direction: row; ">
+	<div class="columns p-2 mt-5">
+		<section class="hero">
+			<div class="hero-body">
+				<div class="container">
+					<h1 class="title">Dashboard</h1>
+					<h2 class="subtitle">
+						Aqui puedes ver tus presupuestos y demas
+					</h2>
+			    </div>
+			</div>
+		</section>
+		<div class="column p-2">
 			
-			<router-link to="/nuevo/presupuesto" class="btn btn-primary">Agregar Presupuesto +</router-link>	
+			<router-link to="/nuevo/presupuesto">
+				<b-button class="mr-2" type="is-link">Añadir Presupuesto</b-button>
+			</router-link>
 
-			<router-link to="/nuevo/gasto" class="btn btn-danger">Agregar Gasto +</router-link>
+			<router-link to="/nuevo/gasto">
+				<b-button class="mr-2" type="is-danger">Añadir Gasto</b-button>
+			</router-link>
 
-			<router-link to="/nuevo/tipo" class="btn btn-success">Agregar Tipo +</router-link>
+			<router-link to="/nuevo/tipo" >
+				<b-button type="is-success">Añadir Tipo</b-button>
+			</router-link>
 		</div>
+
 	</div>
 
 	<budgetsTable/>

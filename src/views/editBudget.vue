@@ -1,3 +1,4 @@
+
 <template>
 	<div class="container">
 		
@@ -6,102 +7,99 @@
 			<hr>
 
 			<form method="POST" @submit.prevent="updateBudget">
-			  <div class="form-row">
-			    <div class="col-md-4 mb-3">
-			      <label>Numero de Pedido</label>
+				<div class="form-row">
+					<div class="col-md-4 mb-3">
+						<label>Numero de Pedido</label>
+			    		<input type="number" name="nroOrder" autofocus v-model="nroOrder" class="form-control" placeholder="522899" required>
+					</div>
+					<div class="col-md-4 mb-3">
+						<label>Numero de Factura</label>
+						<input type="number" name="nroInvoice" v-model="nroInvoice" class="form-control" placeholder="444" required>
+					</div>
+					<div class="col-md-4 mb-3">
+						<label>Fecha</label>
+						<div class="input-group">
+					
+							<div class="input-group-prepend">
+								<span class="input-group-text" id="inputGroupPrepend">*</span>
+							</div>
 
-			      <input type="number" name="nroOrder" autofocus v-model="nroOrder" class="form-control" placeholder="522899" required>
-			      
-			    </div>
-			    <div class="col-md-4 mb-3">
-			      <label>Numero de Factura</label>
-			      <input type="number" name="nroInvoice" v-model="nroInvoice" class="form-control" placeholder="444" required>
-			      
-			    </div>
-			    <div class="col-md-4 mb-3">
-			      <label>Fecha</label>
-			      <div class="input-group">
-			        
-			        <div class="input-group-prepend">
-			          <span class="input-group-text" id="inputGroupPrepend">*</span>
-			        </div>
+							<input type="date" name="date" v-model="date" class="form-control" placeholder="Username" required>
+						</div>
+					</div>
+				</div>
+			<div class="form-row">
+				<div class="col-md-6 mb-3">
+					<label for="validationCustom03">Descripción</label>
+					<input 
+						type="text" 
+						v-model="description" 
+						name="description" 
+						class="form-control" id="validationCustom03" 
+						placeholder="Descripcion" 
+						required>
+				</div>
+				<div class="col-md-3 mb-3">
+					<label>Status</label>
+					<select class="form-control" name="status" v-model="status" id="validationCustom04">
+						<option selected value="1">En proceso</option>
+						<option value="2">Completado</option>
+						<option value="3">Cancelado</option>
+					</select>
+				</div>
 
-			        <input type="date" name="date" v-model="date" class="form-control" placeholder="Username" required>
-			        
-			      </div>
-			    </div>
-			  </div>
-			  <div class="form-row">
-
-			    <div class="col-md-6 mb-3">
-			      <label for="validationCustom03">Descripción</label>
-			      <input type="text" v-model="description" name="description" class="form-control" id="validationCustom03" placeholder="Descripcion" required>
-			      
-			    </div>
-			    <div class="col-md-3 mb-3">
-			      <label>Status</label>
-			      <select class="form-control" name="status" v-model="status" id="validationCustom04">
-					<option selected value="1">En proceso</option>
-					<option value="2">Completado</option>
-					<option value="3">Cancelado</option>
-			      </select>
-			      
-			    </div>
-
-			    <div class="col-md-3 mb-3">
-			      <label>Tipo</label>
+				<div class="col-md-3 mb-3">
+					<label>Tipo</label>
 						      
 				<select name="type" v-model="type" class="form-control">
 					<option v-for="type in types" v-bind:value="type.code">{{type.name}}</option>
 				</select>
 
-			    </div>
-			  </div>
+				</div>
+			</div>
 
-			  <div class="form-row">
+			<div class="form-row">
 			    <div class="col-md-6 mb-3">
-			      <label for="validationCustom03">Monto Total</label>
+			    	<label for="validationCustom03">Monto Total</label>
 					
-			    	<input 
-			    		type="number" 
-			    		name="totalAmount"
-			    		@change="calculateData" 
+					<input 
+						type="number" 
+						name="totalAmount"
+						@change="calculateData" 
 			    		@input="calculateData"  
-			    		@keyup.ctrl.32="multiplyByTwo" 
-			    		@keyup.ctrl.88="addThousand" 
-			    		@keyup.ctrl.77="addMillion"
-			    		v-model="totalAmount" 
-			    		class="form-control" 
-			    		id="validationCustom03" 
-			    		placeholder="20.000.000 BsS" 
-			    		required>
-			    </div>
+						@keyup.ctrl.32="multiplyByTwo" 
+						@keyup.ctrl.88="addThousand" 
+						@keyup.ctrl.77="addMillion"
+						v-model="totalAmount" 
+						class="form-control" 
+						id="validationCustom03" 
+						placeholder="20.000.000 BsS" 
+						required>
+				</div>
 
 			    <div class="col-md-3 mb-3">
-			      <label>Descuento RPS</label>
+			    	<label>Descuento RPS</label>
 
-			      <input type="number" name="descRPS" v-model="descRPS" class="form-control" placeholder="0. BsS" value="0" required>
+			    	<input type="number" name="descRPS" v-model="descRPS" class="form-control" placeholder="0. BsS" value="0" required>
 
-			    </div>
+				</div>
 
-			    <div class="col-md-3 mb-3">
-			      <label>Descuento RPS</label>
+				<div class="col-md-3 mb-3">
+			    	<label>Descuento RPS</label>
 
-			      <input type="number" name="descEPS" v-model="descEPS" disabled class="form-control" placeholder="0. BsS" value="0" required>
+			    	<input type="number" name="descEPS" v-model="descEPS" disabled class="form-control" placeholder="0. BsS" value="0" required>
 
-			    </div>
-			    <div class="col-md-3 mb-3">
-			      <label><b>Ganancia</b></label>
+				</div>
+				<div class="col-md-3 mb-3">
+					<label><b>Ganancia</b></label>
 
-				  <input type="number" name="totalIncome" v-model="totalIncome" disabled class="form-control" placeholder="0. BsS" value="0" required>
+					<input type="number" name="totalIncome" v-model="totalIncome" disabled class="form-control" placeholder="0. BsS" value="0" required>
 					
-				  {{totalIncome}} Bs.S
-
-			    </div>
-
-			  </div>
+					{{totalIncome}} Bs.S
+				</div>
+			</div>
 			<hr>
-			  <button class="btn btn-primary" type="submit">Agregar</button>
+				<button class="btn btn-primary" type="submit">Agregar</button>
 			</form>
 	</div>
 </template>

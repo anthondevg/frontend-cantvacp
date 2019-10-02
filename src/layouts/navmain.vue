@@ -1,47 +1,54 @@
 <template>
 	<div id="app">
-		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-		  <a class="navbar-brand" href="#">CANTVACP</a>
-		  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-		    <span class="navbar-toggler-icon"></span>
-		  </button>
 
-		  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-		    <ul class="navbar-nav mr-auto">
-		      <li class="nav-item active">
-		        <router-link class="nav-link" to="/">Inicio</router-link>
-		      </li>
+	    <b-navbar>
 
-		      <li class="nav-item">
-		        <router-link class="nav-link" to="/dashboard">Dashboard</router-link>
-		      </li>
+	        <template slot="brand">
+	            <b-navbar-item tag="router-link" :to="{ path: '/' }">
+	                <img
+	                    src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Cantv_logo.PNG"
+	                    alt="Sistema de Cantv para llevar contabilidad de Presupuestos y demas hecho por Robwert Mota"
+	                >
+	            </b-navbar-item>
 
-		      <li class="nav-item">
-		        	<router-link class="nav-link" to="/about">Acerca de</router-link>
-		      </li>
+	        </template>
 
-		      <li v-if="!loggedIn" class="nav-item">
-		        	<router-link class="nav-link" to="/login">Iniciar Sesion</router-link>
-		      </li>
+	        <template slot="start">
 
-		      <li v-if="!loggedIn" class="nav-item">
-		        	<router-link class="nav-link" to="/register">Registrarse</router-link>
-		      </li>
+	            <b-navbar-item tag="router-link" :to="{ path: '/' }">
+	            	Inicio
+	            </b-navbar-item>
+	            <b-navbar-item tag="router-link" :to="{ path: '/dashboard' }">
+	                Dashboard
+	            </b-navbar-item>
 
-		      <li v-if="loggedIn" class="nav-item">
-		        	<router-link class="nav-link" to="/logout">Salir</router-link>
-		      </li>
-		    </ul>
-		    
-		    </div>
-		</nav>
+	            <b-navbar-item tag="router-link" :to="{ path: '/about' }">
+	                Acerca
+	            </b-navbar-item>
+	        </template>
+
+	        <template slot="end">
+	            <b-navbar-item tag="div">
+	                <div class="buttons">
+	                    <a v-if="!loggedIn" style="color: white;" class="button is-link">
+	                        <router-link style="color: white;" to="/login">Iniciar Sesion</router-link>
+	                    </a>
+	                    <a v-if="!loggedIn" style="color: white;" class="button is-link">
+	                        <router-link style="color: white;" to="/register">Registrarse</router-link>
+	                    </a>
+						<a v-if="loggedIn" class="button is-light">
+							<router-link to="/logout">Salir</router-link>
+						</a>    
+					</div>
+				</b-navbar-item>
+			</template>
+		</b-navbar>
 
 		<div>
 			<vue-page-transition name="fade-in-right">
-			  <router-view/>
+				<router-view/>
 			</vue-page-transition>	
 		</div>
-
 	</div>
 </template>
 

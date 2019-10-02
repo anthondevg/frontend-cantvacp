@@ -4,7 +4,10 @@ import router from './router'
 import store from './store'
 import NavMain from './layouts/navmain.vue'
 import VuePageTransition from 'vue-page-transition'
+import Buefy from 'buefy'
+import 'buefy/dist/buefy.css'
 
+Vue.use(Buefy)
 Vue.use(VuePageTransition)
 Vue.config.productionTip = false
 
