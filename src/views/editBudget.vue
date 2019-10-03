@@ -2,105 +2,172 @@
 <template>
 	<div class="container">
 		
-		<h1>Editar {{$route.params.id}}</h1>	
+		<h1 style="font-size: 2.4rem;">Editar Presupuesto</h1>
 
 			<hr>
+			<template>
+				<form method="POST" @submit.prevent="updateBudget">
+					<div class="columns">
 
-			<form method="POST" @submit.prevent="updateBudget">
-				<div class="form-row">
-					<div class="col-md-4 mb-3">
-						<label>Numero de Pedido</label>
-			    		<input type="number" name="nroOrder" autofocus v-model="nroOrder" class="form-control" placeholder="522899" required>
-					</div>
-					<div class="col-md-4 mb-3">
-						<label>Numero de Factura</label>
-						<input type="number" name="nroInvoice" v-model="nroInvoice" class="form-control" placeholder="444" required>
-					</div>
-					<div class="col-md-4 mb-3">
-						<label>Fecha</label>
-						<div class="input-group">
+						<div class="column">
+							 <b-field label="Tipo"  label-position="on-border">
+				            	<b-select 
+				            	required
+				            	expanded
+				            	icon="earth" 
+				            	name="type" 
+				            	v-model="type">
+				            
+									<option v-for="type in types" v-bind:value="type.code">{{type.name}}</option>
 					
-							<div class="input-group-prepend">
-								<span class="input-group-text" id="inputGroupPrepend">*</span>
-							</div>
+					            </b-select>
+					        </b-field>
+						</div>
 
-							<input type="date" name="date" v-model="date" class="form-control" placeholder="Username" required>
+						<div class="column">
+					        <b-field label="Numero de Pedido"  label-position="on-border" expanded>
+					            <b-input 
+					            	required
+					            	placeholder="889911"
+					            	type="number" 
+					            	icon="earth" 
+					            	name="nroOrder" 
+					            	v-model="nroOrder">		
+					           	</b-input>
+					        </b-field>
+						</div>
+
+						<div class="column">	
+					        <b-field label="Numero de Factura"  label-position="on-border" expanded>
+					            <b-input 
+					            	required
+					            	placeholder="555"
+					            	type="number" 
+					            	icon="earth" 
+					            	name="nroInvoice" 
+					            	v-model="nroInvoice">		
+					           	</b-input>
+					        </b-field>
+						</div>
+
+						<div class="column">
+					        <b-field label="Fecha"  label-position="on-border">
+						        <b-datepicker
+						        	v-model="date"
+						        	@input="parseDate"
+						            placeholder="Type or select a date..."
+						            icon="calendar-today"
+						            >
+						        </b-datepicker>
+						    </b-field>
 						</div>
 					</div>
-				</div>
-			<div class="form-row">
-				<div class="col-md-6 mb-3">
-					<label for="validationCustom03">Descripción</label>
-					<input 
-						type="text" 
-						v-model="description" 
-						name="description" 
-						class="form-control" id="validationCustom03" 
-						placeholder="Descripcion" 
-						required>
-				</div>
-				<div class="col-md-3 mb-3">
-					<label>Status</label>
-					<select class="form-control" name="status" v-model="status" id="validationCustom04">
-						<option selected value="1">En proceso</option>
-						<option value="2">Completado</option>
-						<option value="3">Cancelado</option>
-					</select>
-				</div>
 
-				<div class="col-md-3 mb-3">
-					<label>Tipo</label>
-						      
-				<select name="type" v-model="type" class="form-control">
-					<option v-for="type in types" v-bind:value="type.code">{{type.name}}</option>
-				</select>
+					<div class="columns">
+						<div class="column">	
+					        <b-field label="Descripción"  label-position="on-border" expanded>
+					            <b-input 
+					            	placeholder="APURE VENTA"
+					            	type="text" 
+					            	icon="pencil" 
+					            	v-model="description" 
+					            	name="description">		
+					           	</b-input>
+					        </b-field>
+						</div>
+						<div class="column">	
+					        <b-field label="Status" label-position="on-border">
+					            <b-select icon="check" name="status" v-model="status">
+									<option selected value="1">En proceso</option>
+									<option value="2">Completado</option>
+									<option value="3">Cancelado</option>
+							      </b-select>
+					        </b-field>
+						</div>
 
-				</div>
-			</div>
+					</div>
 
-			<div class="form-row">
-			    <div class="col-md-6 mb-3">
-			    	<label for="validationCustom03">Monto Total</label>
-					
-					<input 
-						type="number" 
-						name="totalAmount"
-						@change="calculateData" 
-			    		@input="calculateData"  
-						@keyup.ctrl.32="multiplyByTwo" 
-						@keyup.ctrl.88="addThousand" 
-						@keyup.ctrl.77="addMillion"
-						v-model="totalAmount" 
-						class="form-control" 
-						id="validationCustom03" 
-						placeholder="20.000.000 BsS" 
-						required>
-				</div>
+					<hr>
 
-			    <div class="col-md-3 mb-3">
-			    	<label>Descuento RPS</label>
+					<div class="columns">
+						<div class="column">
+							<b-field label="Monto Global"  label-position="on-border" expanded>
+					            <b-input 
+					            	placeholder="523.231 BS"
+					            	type="number" 
+					            	icon="earth"
+						    		name="totalAmount"
+						    		@change="calculateData" 
+						    		@input="calculateData"  
+						    		@keyup.ctrl.32="multiplyByTwo" 
+						    		@keyup.ctrl.88="addThousand" 
+						    		@keyup.ctrl.77="addMillion"
+						    		v-model="totalAmount" 
+						    		required/>		
+					        </b-field>
+							<b-input
+								type="number" 
+								name="descRPS" 
+								v-model="descRPS" 
+								disabled 
+								placeholder="0. BsS" required
+							>	
+							</b-input>
+							<br>
+							<b-input
+								type="number" 
+								name="descEPS" 
+								v-model="descEPS" 
+								disabled 
+								placeholder="0. BsS" 
+								required>
+							</b-input>	
+							<br>
 
-			    	<input type="number" name="descRPS" v-model="descRPS" class="form-control" placeholder="0. BsS" value="0" required>
+							<b-input type="number" name="totalIncome" v-model="totalIncome" disabled placeholder="0. BsS" value="0" required/>
+						
+					  		
+						</div>
+						<div class="column">
+							<div class="columns">
+								
+								<div class="column card">
+									<div style="font-size: 3rem; text-align: center; color: rgb(33,22,111);">
+										RPS
+										<br>
+										<p>2.3400BsS</p>
+									</div>
+									
+								</div>
+								
+								<div class="column card">
+									<div style="font-size: 3rem; text-align: center; color: rgb(111,22,111);">
+										EPS
+										<br>
+										<p>2400BsS</p>
+									</div>
+									
+								</div>
+								
+								<div class="column card">
+									<div style="font-size: 3rem; text-align: center; color: rgb(22,222,111);">
+										Ganancia
+										<br>
+										<p>{{totalIncome}} Bs.S</p>
+									</div>
+									
+								</div>
+							
+							</div>
+						</div>
 
-				</div>
+					</div>
 
-				<div class="col-md-3 mb-3">
-			    	<label>Descuento RPS</label>
-
-			    	<input type="number" name="descEPS" v-model="descEPS" disabled class="form-control" placeholder="0. BsS" value="0" required>
-
-				</div>
-				<div class="col-md-3 mb-3">
-					<label><b>Ganancia</b></label>
-
-					<input type="number" name="totalIncome" v-model="totalIncome" disabled class="form-control" placeholder="0. BsS" value="0" required>
-					
-					{{totalIncome}} Bs.S
-				</div>
-			</div>
-			<hr>
-				<button class="btn btn-primary" type="submit">Agregar</button>
-			</form>
+					<div class="block">
+						<b-button native-type="submit" type="is-link" icon-right="earth">Agregar</b-button>
+					</div>
+				</form>
+			</template>
 	</div>
 </template>
 
@@ -167,6 +234,10 @@
 			  })
 		},
 		methods: {
+			parseDate(){
+				this.date = this.date.getFullYear() + "-" + (this.date.getMonth() + 1) + "-" + this.date.getDate();
+			}
+			,
 			calculateData(){
 				this.descRPS = this.totalAmount * 0.180;
 				this.descEPS = this.totalAmount * 0.03;

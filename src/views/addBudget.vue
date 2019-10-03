@@ -1,110 +1,174 @@
 <template>
 	<div class="container mb-5">
 		
-		<div class="jumbotron">
-			<h1>Agregar nuevo Presupuesto </h1>	
-		</div>
+		<h1 style="font-size: 2.4rem;">Crear nuevo Presupuesto</h1>
 			<hr>
+			<template>
+				<form method="POST" @submit.prevent="newBudget">
+					<div class="columns">
 
-			<form method="POST" @submit.prevent="newBudget">
-			  <div class="form-row">
-			    <div class="col-md-4 mb-3">
-			      <label>Numero de Pedido</label>
-
-			      <input type="number" name="nroOrder" autofocus v-model="nroOrder" class="form-control" placeholder="522899" required>
-			      
-			    </div>
-			    <div class="col-md-4 mb-3">
-			      <label>Numero de Factura</label>
-			      <input type="number" name="nroInvoice" v-model="nroInvoice" class="form-control" placeholder="444" required>
-			      
-			    </div>
-			    <div class="col-md-4 mb-3">
-			      <label>Fecha</label>
-			      <div class="input-group">
-			        
-			        <div class="input-group-prepend">
-			          <span class="input-group-text" id="inputGroupPrepend">*</span>
-			        </div>
-
-			        <input type="date" name="date" v-model="date" class="form-control" placeholder="Username" required>
-			        
-			      </div>
-			    </div>
-			  </div>
-			  <div class="form-row">
-
-			    <div class="col-md-6 mb-3">
-			      <label for="validationCustom03">Descripción</label>
-			      <input type="text" v-model="description" name="description" class="form-control" id="validationCustom03" placeholder="Descripcion" required>
-			      
-			    </div>
-			    <div class="col-md-3 mb-3">
-			      <label>Status</label>
-			      <select class="form-control" name="status" v-model="status" id="validationCustom04">
-					<option selected value="1">En proceso</option>
-					<option value="2">Completado</option>
-					<option value="3">Cancelado</option>
-			      </select>
-			      
-			    </div>
-
-			    <div class="col-md-3 mb-3">
-			      <label>Tipo</label>
-						      
-				<select name="type" v-model="type" class="form-control">
-					<option v-for="type in types" v-bind:value="type.code">{{type.name}}</option>
-				</select>
-
-			    </div>
-			  </div>
-
-			  <div class="form-row">
-			    <div class="col-md-6 mb-3">
-			      <label for="validationCustom03">Monto Total</label>
+						<div class="column">
+							 <b-field label="Tipo"  label-position="on-border">
+				            	<b-select 
+				            	required
+				            	expanded
+				            	icon="earth" 
+				            	name="type" 
+				            	v-model="type">
+				            
+									<option v-for="type in types" v-bind:value="type.code">{{type.name}}</option>
 					
-			    	<input 
-			    		type="number" 
-			    		name="totalAmount"
-			    		@change="calculateData" 
-			    		@input="calculateData"  
-			    		@keyup.ctrl.32="multiplyByTwo" 
-			    		@keyup.ctrl.88="addThousand" 
-			    		@keyup.ctrl.77="addMillion"
-			    		v-model="totalAmount" 
-			    		class="form-control" 
-			    		id="validationCustom03" 
-			    		placeholder="20.000.000 BsS" 
-			    		required>
-			    </div>
+					            </b-select>
+					        </b-field>
+						</div>
 
-			    <div class="col-md-3 mb-3">
-			      <label>Descuento RPS</label>
+						<div class="column">
+					        <b-field label="Numero de Pedido"  label-position="on-border" expanded>
+					            <b-input 
+					            	required
+					            	placeholder="889911"
+					            	type="number" 
+					            	native.type="number"
+					            	icon="earth" 
+					            	name="nroOrder" 
+					            	v-model="nroOrder">		
+					           	</b-input>
+					        </b-field>
+						</div>
 
-			      <input type="number" name="descRPS" v-model="descRPS" disabled class="form-control" placeholder="0. BsS" value="0" required>
+						<div class="column">	
+					        <b-field label="Numero de Factura"  label-position="on-border" expanded>
+					            <b-input 
+					            	required
+					            	placeholder="555"
+					            	type="number" 
+					            	native.type="number"
+					            	icon="earth" 
+					            	name="nroInvoice" 
+					            	v-model="nroInvoice">		
+					           	</b-input>
+					        </b-field>
+						</div>
 
-			    </div>
+						<div class="column">
+					        <b-field label="Fecha"  label-position="on-border">
+						        <b-datepicker
+						        	v-model="date"
+						        	@input="parseDate"
+						            placeholder="Type or select a date..."
+						            icon="calendar-today"
+						            >
+						        </b-datepicker>
+						    </b-field>
+						</div>
+					</div>
 
-			    <div class="col-md-3 mb-3">
-			      <label>Descuento RPS</label>
+					<div class="columns">
+						<div class="column">	
+					        <b-field label="Descripción"  label-position="on-border" expanded>
+					            <b-input 
+					            	placeholder="APURE VENTA"
+					            	type="text" 
+					            	icon="pencil" 
+					            	v-model="description" 
+					            	name="description">		
+					           	</b-input>
+					        </b-field>
+						</div>
+						<div class="column">	
+					        <b-field label="Status" label-position="on-border">
+					            <b-select icon="check" name="status" v-model="status">
+									<option selected value="1">En proceso</option>
+									<option value="2">Completado</option>
+									<option value="3">Cancelado</option>
+							      </b-select>
+					        </b-field>
+						</div>
 
-			      <input type="number" name="descEPS" v-model="descEPS" disabled class="form-control" placeholder="0. BsS" value="0" required>
+					</div>
 
-			    </div>
-			    <div class="col-md-3 mb-3">
-			      <label><b>Ganancia</b></label>
+					<hr>
 
-				  <input type="number" name="totalIncome" v-model="totalIncome" disabled class="form-control" placeholder="0. BsS" value="0" required>
-					
-				  {{totalIncome}} Bs.S
+					<div class="columns">
+						<div class="column">
+							<b-field label="Monto Global"  label-position="on-border" expanded>
+					            <b-input 
+					            	placeholder="523.231 BS"
+					            	type="number" 
+					            	icon="earth"
+						    		name="totalAmount"
+						    		@change="calculateData" 
+						    		@input="calculateData"  
+						    		@keyup.ctrl.32="multiplyByTwo" 
+						    		@keyup.ctrl.88="addThousand" 
+						    		@keyup.ctrl.77="addMillion"
+						    		v-model="totalAmount" 
+						    		required/>		
+					        </b-field>
+							<b-input
+								type="number" 
+								name="descRPS" 
+								v-model="descRPS" 
+								disabled 
+								placeholder="0. BsS" required
+							>	
+							</b-input>
+							<br>
+							<b-input
+								type="number" 
+								name="descEPS" 
+								v-model="descEPS" 
+								disabled 
+								placeholder="0. BsS" 
+								required>
+							</b-input>	
+							<br>
 
-			    </div>
+							<b-input type="number" name="totalIncome" v-model="totalIncome" disabled placeholder="0. BsS" value="0" required/>
+						
+					  		
+						</div>
+						<div class="column">
+							<div class="columns">
+								
+								<div class="column ">
+									<div style="font-size: 2rem; text-align: center; color: rgb(33,22,111);">
+										RPS
+										<br>
+										<p>{{descRPS}} BsS</p>
+									</div>
+									
+								</div>
+								
+								<div class="column">
+									<div style="font-size: 2rem; text-align: center; color: rgb(222,222,111);">
+										EPS
+										<br>
+										<p>{{descEPS}} BsS</p>
+									</div>
+									
+								</div>
+								
+								<div class="column">
+									<div style="font-size: 2rem; text-align: center; color: rgb(22,222,111);">
+										Ganancia
+										<br>
+										<p>{{totalIncome}} Bs.S</p>
+									</div>
+									
+								</div>
+							
+							</div>
+						</div>
 
-			  </div>
-			<hr>
+					</div>
 
-			  <button class="btn btn-primary" type="submit">Agregar</button>
-			</form>
+					<div class="block">
+						<b-button native-type="submit" type="is-link" icon-right="earth">Agregar</b-button>
+					</div>
+				</form>
+			</template>
+		
 	</div>
 </template>
 
@@ -123,11 +187,12 @@
 				nroInvoice: '',
 				totalAmount: 0,
 				description: '',
-				date: '',
+				date: [], 
 				status: '1',
+				control_Id: this.$store.getters.current_control_id,
 				type: '',
-				descRPS: '',
-				descEPS: '',
+				descRPS: 0,
+				descEPS: 0,
 				totalIncome: '',
 				types: []
 			}
@@ -136,7 +201,6 @@
 			axios.get(`/type/id/${this.$store.getters.user_id}`)
 			  .then(res=> {
 			    // handle success
-
 				this.type = res.data[0].code
 			    this.types = res.data;
 			    console.log(res.data);
@@ -148,6 +212,9 @@
 
 		},
 		methods: {
+			parseDate(){
+				this.date = this.date.getFullYear() + "-" + (this.date.getMonth() + 1) + "-" + this.date.getDate();
+			},
 			calculateData(){
 				this.descRPS = this.totalAmount * 0.180;
 				this.descEPS = this.totalAmount * 0.03;
@@ -180,13 +247,14 @@
 				this.calculateData()	
 			}, 
 			newBudget(){
-				console.log('new budget')
+				console.log('new budget in ')
 
 				this.$store.dispatch('newBudget',{
 					userId: this.userId,
-					nroOrder: this.nroOrder,
-					nroInvoice: this.nroInvoice,
-					totalAmount: this.totalAmount,
+					control_Id: this.control_Id,
+					nroOrder: new Number(this.nroOrder),
+					nroInvoice: new Number(this.nroInvoice),
+					totalAmount: new Number(this.totalAmount),
 					description: this.description,
 					date: this.date,
 					status: this.status,
@@ -196,7 +264,7 @@
 					totalIncome: this.totalIncome
 				})
 				.then(response=>{
-					this.$router.push({name: 'dashboard'})
+					this.$router.push({path: `/control/${this.$store.getters.current_control_id}`})
 				})
 			}
 

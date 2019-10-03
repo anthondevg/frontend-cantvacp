@@ -22,7 +22,9 @@ export default new Vuex.Store({
     user_id: localStorage.getItem('user_id') || null,
     // no funciona esto todavia
     types: 'nah',
-
+    // aqui guardaremos la data para los controles 
+    controls: [],
+    current_control_id: localStorage.getItem('current_control_id') || null
     // 
   },
   mutations: {
@@ -32,7 +34,11 @@ export default new Vuex.Store({
   		state.token = token
   	},
     destroyToken(state){
-      state.token = null 
+      state.token = null;
+      state.user_id = '';
+      state.budgets = [];
+      state.controls = [];
+      state.globalBudgets = [];
     },
     fetchGlobalBudgets(state,data){
       state.globalBudgets = data;
@@ -49,6 +55,9 @@ export default new Vuex.Store({
         .catch(function (error) {
           console.log('Error fetching types',error);
         })
+    },
+    fetchControls(state,data){
+       state.controls = data;
     },
     fetchBudgetsFromTo(state,data){
       let fromMl = Date.parse(data.from);
@@ -69,6 +78,10 @@ export default new Vuex.Store({
 
       localStorage.setItem('user_id',data[0].id);
       state.user_id = data[0].id;
+    },
+    setCurrentControl(state,data){
+      localStorage.setItem('current_control_id',data.control_id);
+      state.current_control_id = data.control_id;
     }
   },
   getters: {
@@ -83,10 +96,18 @@ export default new Vuex.Store({
     },
     types(state){
       return state.types
+    },
+    controls(state){
+      return state.controls
+    },
+    current_control_id(state){
+      return state.current_control_id
     }
   },
   actions: {
-
+    setCurrentControl(context,data){
+      context.commit('setCurrentControl',data)
+    },
     // authentication actions
 
   	register(context,data){
@@ -117,9 +138,12 @@ export default new Vuex.Store({
           .then(res=>{
 
             localStorage.removeItem('access_token');
+            localStorage.removeItem('user_id');
+            
             //encomendar la mutacion destroyToken
             context.commit('destroyToken');
             
+
             resolve(res);
             console.log(res);
           })
@@ -164,7 +188,7 @@ export default new Vuex.Store({
 
     // Budgets actions
     fetchGlobalBudgets(context){
-      axios.get(`/budget/getAll`)
+      axios.get(`/budget/getAll/${this.state.user_id}`)
        .then(res=>{
           context.commit('fetchGlobalBudgets',res.data)
        })
@@ -172,15 +196,36 @@ export default new Vuex.Store({
           console.log('ERROR FETCHING GLOBAL BUDGETS',err)
        })
     }, 
+    fetchControls(context){
+      axios.get(`/control/${this.state.user_id}`)
+        .then(res=> {
+          context.commit('fetchControls',res.data);
+        })
+        .catch(function (error) {
+          // handle error
+          console.log('ERROR FETCHING CONTROLS',error);
+        })
+    },
     fetchBudgets(context,data){
-      return axios.get(`/budget/getAll/id/${this.state.user_id}?page=${data.currentPage}`)
-       .then(res=>{
-          context.commit('fetchBudgets',res.data.data)
-          return res.data;
-       })
-       .catch(err=>{
-          console.log('ERROR FETCHING BUDGETS',err)
-       })
+      if(data.control_id){
+        return axios.get(`/budget/getAll/id/${this.state.user_id}/${data.control_id}?page=${data.currentPage}`)
+         .then(res=>{
+            context.commit('fetchBudgets',res.data.data)
+            return res.data;
+         })
+         .catch(err=>{
+            console.log('ERROR FETCHING BUDGETS',err)
+         })
+      }else{
+          return axios.get(`/budget/getAll/id/${this.state.user_id}?page=${data.currentPage}`)
+         .then(res=>{
+            context.commit('fetchBudgets',res.data.data)
+            return res.data;
+         })
+         .catch(err=>{
+            console.log('ERROR FETCHING BUDGETS',err)
+         })
+      }
     },
     fetchTypes(context){
       context.commit('fetchTypes')
@@ -194,6 +239,7 @@ export default new Vuex.Store({
           axios.post('/budget',{
 
             user_Id: data.userId,
+            control_Id: data.control_Id,
             nroOrder: data.nroOrder,
             nroInvoice: data.nroInvoice,
             description: data.description,
@@ -266,6 +312,22 @@ export default new Vuex.Store({
           })
         }) 
 
+    },
+    // control actions
+    newControl(context,data){
+
+        return new Promise((resolve, reject) => {
+          axios.post('/control',{
+            user_Id: data.userId,
+            name: data.name
+          })
+          .then(res=>{
+            resolve(res);
+          })
+          .catch(error=>{
+            reject(error)
+          })
+        }) 
     }
   }
 })

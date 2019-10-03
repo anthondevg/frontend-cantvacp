@@ -58,7 +58,7 @@ export default new Router({
     },    
     {
       path: '/nuevo/tipo',
-      name: 'newType',
+      name: 'addType',
       component: () => import(/* webpackChunkName: "logout" */ './views/addType.vue')
     },
     {
@@ -70,6 +70,26 @@ export default new Router({
       path: '/nuevo/gasto',
       name: 'gasto',
       component: () => import(/* webpackChunkName: "addExpense" */ './views/addGasto.vue')
+    },
+    {
+      path: '/controles',
+      name: 'controlPanel',
+      component: () => import(/* webpackChunkName: "addExpense" */ './views/controlPanel.vue')
+    },
+    {
+      path: '/control/:id',
+      name: 'control',
+      component: () => import(/* webpackChunkName: "addExpense" */ './components/Control.vue')
+    },
+    {
+      path: '/nuevo/control',
+      name: 'addControl',
+      component: () => import(/* webpackChunkName: "addExpense" */ './views/addControl.vue')
+    },
+    {
+      path: '/nuevo/gasto',
+      name: 'addExpense',
+      component: () => import(/* webpackChunkName: "addExpense" */ './views/addExpense.vue')
     }
   ]
 })

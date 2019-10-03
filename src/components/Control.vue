@@ -1,18 +1,30 @@
 <template>
 	
-	<div class="row p-4 mb-4 mt-2">
-		<div class="card" style="padding: 2em; margin-bottom: 0.5em">
-			<h1 style="font-size: 2.4rem;">Ganancia Total</h1>
-			<p>
-				Bolivares Soberanos <small class="text-danger">{{ incomeGlobalTotal }} BsS</small>
-				<br>
-				 <small class="text-primary">USD:(DolarToday) ${{ totalInDollars }} </small>
-				 <br>
-				 <small class="text-primary">USD:(AirTM) ${{ totalInDollarsAirTM }} </small>
-			</p>
-		</div>
+	<div class="container">
+		<h1 style="font-size: 1.5rem;">Control | {{this.$route.params.id}}</h1>
+              
+  		<hr>
+	
+  		<div class="card add-div">
+            
+            <b-button 
+                  tag="router-link"
+                  :to="{ name: 'newBudget'}" 
+                  type="is-primary"
+                        icon-right="plus">
+                Añadir Presupuesto
+            </b-button>
 
-		<h1 style="font-size: 2.4rem;">Presupuestos</h1>
+            <b-button 
+                  tag="router-link"
+                  :to="{ name: 'addExpense'}" 
+                  type="is-danger"
+                  icon-right="plus">
+                Añadir Gasto
+            </b-button>
+        </div>
+
+        <h1 style="font-size: 2.4rem;">Presupuestos</h1>
 	
 		<div class="columns">
 			<div class="column">
@@ -54,12 +66,13 @@
 
 		  <thead>
 		    <tr>
-		      <th scope="col">Control</th>
+		      
 		      <th scope="col">Nro Pedido</th>
 		      <th scope="col">Nro Factura</th>
 		      <th scope="col">Monto</th>
 		      <th scope="col">Descripcion</th>
 		      <th scope="col">Status</th>
+		      <th scope="col">Control</th>
 		      
 		      <th scope="col">DRSE</th>
 
@@ -73,12 +86,12 @@
 		  <tbody>
 		    <tr v-bind:value="budget.id" v-for="budget in budgets" v-if="budget.type == type || type == 'ALL'">
 
-		    	<td>{{ budget.control_Id}}</td>
 		    	<td>{{ budget.nroOrder}}</td>
 		    	<td>{{ budget.nroInvoice}}</td>
 		    	<td>{{ budget.totalAmount}}</td>
 		    	<td>{{ budget.description}}</td>
 		    	<td>{{ budget.status}}</td>
+		    	<td>{{ budget.control_Id}}</td>
 		    	
 		    	<td>{{ budget.DRSE}}</td>
 		    	
@@ -115,32 +128,21 @@
             aria-current-label="Current page">
         </b-pagination>
 		
-		<div class="card" style="padding: 2em; margin-top: 1em; margin-bottom: 0.5em">
-			<h1 style="font-size: 2.4rem;">Ganancia Total</h1>
-			<p>
-				Bolivares Soberanos <small class="text-danger">{{ incomeGlobalTotal }} BsS</small>
-				<br>
-				 <small class="text-primary">USD:(DolarToday) ${{ totalInDollars }} </small>
-				 <br>
-				 <small class="text-primary">USD:(AirTM) ${{ totalInDollarsAirTM }} </small>
-			</p>
-		</div>
-    </div>
-	
+	</div>
 </template>
 
 <script>
-	
 	import axios from 'axios'
 
 	// setting up the endpoint !!!!!!!
 	axios.defaults.baseURL = process.env.VUE_APP_API_ENDPOINT;
  	
 	export default {
-		name: 'budgetsTable',
-		data() {
+		name: 'control',
+		data(){
 			return {
-				type: 'ALL', //SELECTED TYPE
+				control_id: this.$route.params.id,
+				type: 'ALL',
 				types: [],
 				from: '',
 				to: '',
@@ -157,7 +159,7 @@
 			}
 		},
 		computed: {
-			incomeGlobalTotal(){
+			TotalIncome(){
 				let total = 0;
 				
 				this.budgets.forEach(budget=>{
@@ -168,10 +170,10 @@
 				return total
 			},
 			totalInDollars(){
-				return this.incomeGlobalTotal / 20000;
+				return this.TotalIncome / 20000;
 			},
 			totalInDollarsAirTM(){
-				return this.incomeGlobalTotal / 21400;
+				return this.TotalIncome / 21400;
 			},
 			budgets(){
 				return this.$store.getters.budgets
@@ -204,7 +206,6 @@
 			},
 			fetchBudgetsFromTo(){
 				console.log('get budgets')
-
 				
 				let from = this.dates[0].getFullYear() + "-" + (this.dates[0].getMonth() + 1) + "-" + this.dates[0].getDate();
 
@@ -223,7 +224,7 @@
 
 				this.current = page;
 				this.$store.dispatch('fetchBudgets',{
-					
+					control_id: this.$store.getters.current_control_id,
 					currentPage: this.current
 				})
 				.then(res=>{
@@ -232,7 +233,7 @@
 			}
 		},
 		created: function(){
-			
+
 			axios.get(`/type/id/${this.$store.getters.user_id}`)
 			  .then(res=> {
 			    // handle succes
@@ -242,16 +243,14 @@
 			  .catch(function (error) {
 			    // handle error
 			    console.log(error);
-			  })
+			  });
 
-			/*this.$store.dispatch('fetchTypes');
+			this.$store.dispatch('setCurrentControl',{
+				control_id: this.$route.params.id
+			});
 
-			this.types = this.$store.getters.types;
-			*/
-
-			// request the budgets for the current page
-			this.$store.dispatch('fetchGlobalBudgets');
 			this.$store.dispatch('fetchBudgets',{
+				control_id: this.$store.getters.current_control_id,
 				currentPage: this.current
 			})
 			.then(res=>{
@@ -261,5 +260,4 @@
 			});
 		}
 	}
-
 </script>
