@@ -1,7 +1,7 @@
 <template>
 	<div class="container mb-5">
 		
-		<h1 style="font-size: 2.4rem;">Crear Control</h1>
+		<h1 style="font-size: 2.4rem;"><b-icon icon="table" style="margin-right: 5px;"></b-icon>Crear Control</h1>
 			<hr>
 			<template>
 				<form method="POST" @submit.prevent="newControl">

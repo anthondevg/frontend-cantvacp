@@ -21,7 +21,7 @@
 	            	Inicio
 	            </b-navbar-item>
 	            <b-navbar-item v-if="loggedIn" icon="earth" tag="router-link" :to="{ path: '/controles' }">
-	            	<b-icon icon="pencil" style="margin-right: 5px;"></b-icon>
+	            	<b-icon icon="table" style="margin-right: 5px;"></b-icon>
             
 	                Controles
 	            </b-navbar-item>

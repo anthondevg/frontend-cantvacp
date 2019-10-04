@@ -1,17 +1,26 @@
 <template>
 	
 	<div class="container">
-		<h1 style="font-size: 1.5rem;">Control | {{this.$route.params.id}}</h1>
+		<h1 style="font-size: 1.5rem;"><b-icon icon="table" style="margin-right: 5px;"></b-icon>Control | {{this.$route.params.id}}</h1>
               
   		<hr>
-	
+		<div class="card" style="padding: 2em; margin-bottom: 0.5em">
+			<h1 style="font-size: 2.4rem;">Ganancia Total</h1>
+			<p>
+				Bolivares Soberanos <small class="text-danger">{{ totalIncome | formattedNumber }}</small>
+				<br>
+				 <small class="text-primary">USD:(DolarToday) ${{ totalInDollars }} </small>
+				 <br>
+				 <small class="text-primary">USD:(AirTM) ${{ totalInDollarsAirTM }} </small>
+			</p>
+		</div>
   		<div class="card add-div">
             
             <b-button 
                   tag="router-link"
                   :to="{ name: 'newBudget'}" 
                   type="is-primary"
-                        icon-right="plus">
+                  icon-right="ghost">
                 Añadir Presupuesto
             </b-button>
 
@@ -24,7 +33,7 @@
             </b-button>
         </div>
 
-        <h1 style="font-size: 2.4rem;">Presupuestos</h1>
+        <h1 style="font-size: 2.4rem; font-family: Roboto;">Presupuestos</h1>
 	
 		<div class="columns">
 			<div class="column">
@@ -34,8 +43,7 @@
 		            	
 		            	size="is-medium" 
 		            	expanded 
-		            	placeholder="CANTV" 
-		            	@change="onChange($event)" 
+		            	placeholder="CANTV"
 		            	v-model="type" 
 		            	icon="earth">
 		            	<option value="ALL">Todo</option>
@@ -60,10 +68,35 @@
 				</template>
 			</div>	
 	</div>
+		
+		
+		<div class="loading-card">
+			<orbit-spinner
+				v-if="loading"
+			  :animation-duration="1200"
+			  :size="55"
+			  color="#ff1d5e"
+			/>
+		</div>
+		<div v-if="budgets.length == 0 && !loading">
+			<div class="empty-budgets-msg">
 
-	
-		<table style="width: 100%;" class="card table mb-3 center is-striped">
+				<b-icon icon="ghost"></b-icon>
+				
+				<h1 >No tienes presupuestos aún. Agrega algunos!</h1>
+				
+				<b-button 
+                  tag="router-link"
+                  :to="{ name: 'newBudget'}" 
+                  type="is-primary"
+                 >
+                Nuevo Presupuesto
+            </b-button>
+			</div>
+		</div>
 
+		<table v-if="budgets.length > 0 && !loading" style="width: 100%;" class="card table mb-3 center is-striped">
+		  
 		  <thead>
 		    <tr>
 		      
@@ -71,9 +104,7 @@
 		      <th scope="col">Nro Factura</th>
 		      <th scope="col">Monto</th>
 		      <th scope="col">Descripcion</th>
-		      <th scope="col">Status</th>
-		      <th scope="col">Control</th>
-		      
+		     
 		      <th scope="col">DRSE</th>
 
 		      <th scope="col">Fecha</th>
@@ -84,20 +115,20 @@
 		    </tr>
 		  </thead>
 		  <tbody>
-		    <tr v-bind:value="budget.id" v-for="budget in budgets" v-if="budget.type == type || type == 'ALL'">
-
-		    	<td>{{ budget.nroOrder}}</td>
-		    	<td>{{ budget.nroInvoice}}</td>
-		    	<td>{{ budget.totalAmount}}</td>
+		  	
+		    <tr class="budget-el" v-bind:style="{ borderLeft: borderLeft[budget.status] }" v-bind:value="budget.id" v-for="budget in budgets" v-if="budget.type == type || type == 'ALL'">
+				
+		    	<td>{{ budget.nroOrder }}</td>
+		    	<td>{{ budget.nroInvoice }}</td>
+		    	<td>{{ parseInt(budget.totalAmount) | formattedNumber }}</td>
 		    	<td>{{ budget.description}}</td>
-		    	<td>{{ budget.status}}</td>
-		    	<td>{{ budget.control_Id}}</td>
+		    
 		    	
-		    	<td>{{ budget.DRSE}}</td>
+		    	<td>{{ parseInt(budget.DRSE) | formattedNumber}}</td>
 		    	
 		    	<td>{{ budget.date}}</td>
-		    	<td>{{ budget.DEPS}}</td>
-		    	<td>{{ budget.totalIncome}}</td>
+		    	<td>{{ parseInt(budget.DEPS) | formattedNumber}}</td>
+		    	<td>{{ parseInt(budget.totalIncome) | formattedNumber}}</td>
 		    	<td>
 		    		<b-button 
 		    			tag="router-link"
@@ -133,6 +164,9 @@
 
 <script>
 	import axios from 'axios'
+	import { AtomSpinner } from 'epic-spinners'
+	import { HalfCircleSpinner } from 'epic-spinners'
+	import { OrbitSpinner } from 'epic-spinners'
 
 	// setting up the endpoint !!!!!!!
 	axios.defaults.baseURL = process.env.VUE_APP_API_ENDPOINT;
@@ -155,37 +189,51 @@
                 rangeBefore: 3,
                 rangeAfter: 4,
                 order: 'is-centered',
-                size: 'size'
+                size: 'size',
+                loading: true,
+
+                // color of budgets status
+                borderLeft: [
+                	'3px solid orange',
+                	'3px solid green',
+                	'3px solid red'
+                ]
 			}
+		},
+		components: {
+			AtomSpinner,
+			HalfCircleSpinner,
+			OrbitSpinner
 		},
 		computed: {
-			TotalIncome(){
+			totalIncome(){
 				let total = 0;
-				
-				this.budgets.forEach(budget=>{
+				this.globalBudgets.forEach(budget=>{
 					total += parseInt(budget.totalIncome);
 				});
-				
+
 				this.$store.state.globalTotal += total;
-				return total
+				return parseInt(total);
 			},
 			totalInDollars(){
-				return this.TotalIncome / 20000;
+				return this.totalIncome / 20000;
 			},
 			totalInDollarsAirTM(){
-				return this.TotalIncome / 21400;
+				return this.totalIncome / 21400;
 			},
 			budgets(){
-				return this.$store.getters.budgets
+				return this.$store.getters.budgets;
+			},
+			globalBudgets(){
+				return this.$store.getters.globalBudgets;
 			}
 		},
+		filters: {
+	    	formattedNumber (value) {
+	     		return `${value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')} Bs`
+	    	}
+	  	},
 		methods: {
-			onChange(event){
-				console.log(event.target.value)
-			},
-			test(){
-				alert('work')
-			},
 			deleteBudget(id){
 
 				if(window.confirm('Estas seguro?')){
@@ -255,9 +303,37 @@
 			})
 			.then(res=>{
 				console.log(res);
+				this.loading = false;
 				this.total = res.total;
 				console.log(res.last_page);
+			});
+
+			this.$store.dispatch('fetchGlobalBudgets',{
+				control_id: this.$store.getters.current_control_id
 			});
 		}
 	}
 </script>
+
+<style>
+	
+	.empty-budgets-msg{
+		width: 100%; text-align: center; font-size: 2.4rem;
+	}
+
+	.loading-card{
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.budget-el{
+		border-left: '2px solid green';
+		transition: all ease .2s;
+	}
+
+	.budget-el:hover{
+		background-color: rgb(233,233,233) !important;
+		border-left: '4px solid green' !important;
+	}
+</style>

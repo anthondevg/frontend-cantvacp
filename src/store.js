@@ -91,6 +91,9 @@ export default new Vuex.Store({
     budgets(state){
       return state.budgets
     },
+    globalBudgets(state){
+      return state.globalBudgets
+    },
     user_id(state){
       return state.user_id
     },
@@ -187,8 +190,8 @@ export default new Vuex.Store({
   	},
 
     // Budgets actions
-    fetchGlobalBudgets(context){
-      axios.get(`/budget/getAll/${this.state.user_id}`)
+    fetchGlobalBudgets(context,data){
+      axios.get(`/budget/getAll/${this.state.user_id}/${data.control_id}`)
        .then(res=>{
           context.commit('fetchGlobalBudgets',res.data)
        })

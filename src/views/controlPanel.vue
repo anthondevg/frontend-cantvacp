@@ -16,7 +16,7 @@
                   tag="router-link"
                   :to="{ name: 'addControl'}" 
                   type="is-link"
-                        icon-right="plus">
+                        icon-right="table">
                 Añadir Control
             </b-button>
 
@@ -24,7 +24,7 @@
                   tag="router-link"
                   :to="{ name: 'addType'}" 
                   type="is-success"
-                  icon-right="plus">
+                  icon-right="earth">
                 Añadir Tipo
             </b-button>
           </div>

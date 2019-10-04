@@ -78,9 +78,9 @@
 						<div class="column">	
 					        <b-field label="Status" label-position="on-border">
 					            <b-select icon="check" name="status" v-model="status">
-									<option selected value="1">En proceso</option>
-									<option value="2">Completado</option>
-									<option value="3">Cancelado</option>
+									<option selected value="0">En proceso</option>
+									<option value="1">Completado</option>
+									<option value="2">Cancelado</option>
 							      </b-select>
 					        </b-field>
 						</div>
@@ -164,7 +164,7 @@
 					</div>
 
 					<div class="block">
-						<b-button native-type="submit" type="is-link" icon-right="earth">Agregar</b-button>
+						<b-button native-type="submit" type="is-link" icon-right="save">Guardar</b-button>
 					</div>
 				</form>
 			</template>
@@ -287,7 +287,7 @@
 					totalIncome: this.totalIncome
 				})
 				.then(response=>{
-					this.$router.push({name: 'dashboard'})
+					this.$router.push({path: `/control/${this.$store.getters.current_control_id}`})
 				})
 			}
 
