@@ -16,6 +16,7 @@ export default new Vuex.Store({
     globalBudgets: [],
     // local budgets para cuando se consultan por fecha
     budgets: [],
+    expenses: [],
     // ganancia total de budgets
     globalTotal: 0,
     // el id del usuario 
@@ -45,6 +46,9 @@ export default new Vuex.Store({
     },
     fetchBudgets(state,data){
       state.budgets = data;
+    },
+    fetchExpenses(state,data){
+      state.expenses = data;
     },
     fetchTypes(state){
        axios.get(`/type/id/${state.user_id}`)
@@ -90,6 +94,9 @@ export default new Vuex.Store({
     },
     budgets(state){
       return state.budgets
+    },
+    expenses(state){
+      return state.expenses
     },
     globalBudgets(state){
       return state.globalBudgets
@@ -209,6 +216,27 @@ export default new Vuex.Store({
           console.log('ERROR FETCHING CONTROLS',error);
         })
     },
+    fetchExpenses(context,data){
+      if(data.control_id){
+        return axios.get(`/expense/${this.state.user_id}/${data.control_id}`)
+         .then(res=>{
+            context.commit('fetchExpenses',res.data)
+            return res.data;
+         })
+         .catch(err=>{
+            console.log('Error fetching expenses',err)
+         })
+      }else{
+          return axios.get(`/expense/getAll/${this.state.user_id}`)
+         .then(res=>{
+            context.commit('fetchExpenses',res.data)
+            return res.data;
+         })
+         .catch(err=>{
+            console.log('Error fetching expenses',err)
+         })
+      }
+    },
     fetchBudgets(context,data){
       if(data.control_id){
         return axios.get(`/budget/getAll/id/${this.state.user_id}/${data.control_id}?page=${data.currentPage}`)
@@ -217,7 +245,7 @@ export default new Vuex.Store({
             return res.data;
          })
          .catch(err=>{
-            console.log('ERROR FETCHING BUDGETS',err)
+            console.log('Error fetching budgets',err)
          })
       }else{
           return axios.get(`/budget/getAll/id/${this.state.user_id}?page=${data.currentPage}`)
@@ -226,7 +254,7 @@ export default new Vuex.Store({
             return res.data;
          })
          .catch(err=>{
-            console.log('ERROR FETCHING BUDGETS',err)
+            console.log('Error fetching budgets',err)
          })
       }
     },
@@ -266,6 +294,22 @@ export default new Vuex.Store({
           })
         }) 
 
+    },
+    newExpense(context,data){
+        return new Promise((resolve, reject) => {
+          axios.post('/expense',{
+            user_Id: data.userId,
+            control_Id: data.control_Id,
+            description: data.description,
+            amount: data.amount
+          })
+          .then(res=>{
+            resolve(res);
+          })
+          .catch(error=>{
+            reject(error)
+          })
+        }) 
     },
     updateBudget(context,data){
 

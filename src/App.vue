@@ -9,8 +9,7 @@
 </template>
 
 <style>
-#app {
-}
+
 #nav {
   padding: 30px;
 }
