@@ -131,29 +131,30 @@
 						<div class="column">
 							<div class="columns">
 								
-								<div class="column card">
-									<div style="font-size: 3rem; text-align: center; color: rgb(33,22,111);">
+								
+								<div class="column ">
+									<div style="font-size: 2rem; text-align: center; color: rgb(33,22,111);">
 										RPS
 										<br>
-										<p>2.3400BsS</p>
+										<p>{{parseInt(descRPS) | formattedNumber }}</p>
 									</div>
 									
 								</div>
 								
-								<div class="column card">
-									<div style="font-size: 3rem; text-align: center; color: rgb(111,22,111);">
+								<div class="column">
+									<div style="font-size: 2rem; text-align: center; color: rgb(222,222,111);">
 										EPS
 										<br>
-										<p>2400BsS</p>
+										<p>{{parseInt(descEPS) | formattedNumber}}</p>
 									</div>
 									
 								</div>
 								
-								<div class="column card">
-									<div style="font-size: 3rem; text-align: center; color: rgb(22,222,111);">
+								<div class="column">
+									<div style="font-size: 2rem; text-align: center; color: rgb(22,222,111);">
 										Ganancia
 										<br>
-										<p>{{totalIncome}} Bs.S</p>
+										<p>{{parseInt(totalIncome) | formattedNumber}}</p>
 									</div>
 									
 								</div>
@@ -233,6 +234,11 @@
 			    console.log(error);
 			  })
 		},
+		filters: {
+	    	formattedNumber (value) {
+	     		return `${value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')} Bs`
+	    	}
+	  	},
 		methods: {
 			parseDate(){
 				this.date = this.date.getFullYear() + "-" + (this.date.getMonth() + 1) + "-" + this.date.getDate();

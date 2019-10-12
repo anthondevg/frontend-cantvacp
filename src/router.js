@@ -22,14 +22,6 @@ export default new Router({
       component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
     },
     {
-      path: '/dashboard',
-      name: 'dashboard',
-      component: () => import(/* webpackChunkName: "register" */ './views/Dashboard.vue'),
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
       path: '/login',
       name: 'login',
       component: () => import(/* webpackChunkName: "login" */ './auth/Login.vue'),
@@ -54,42 +46,65 @@ export default new Router({
     {
       path: '/nuevo/presupuesto',
       name: 'newBudget',
-      component: () => import(/* webpackChunkName: "logout" */ './views/addBudget.vue')
+      component: () => import(/* webpackChunkName: "logout" */ './views/addBudget.vue'),
+      meta: {
+        requiresAuth: true
+      }
     },    
     {
       path: '/nuevo/tipo',
       name: 'addType',
-      component: () => import(/* webpackChunkName: "logout" */ './views/addType.vue')
+      component: () => import(/* webpackChunkName: "logout" */ './views/addType.vue'),
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/presupuesto/:id', 
       name: 'presupuesto', 
       component: () => import(/* webpackChunkName: "logout" */ './views/editBudget.vue')
-    },
-    {
-      path: '/nuevo/gasto',
-      name: 'gasto',
-      component: () => import(/* webpackChunkName: "addExpense" */ './views/addGasto.vue')
+      ,meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/controles',
       name: 'controlPanel',
       component: () => import(/* webpackChunkName: "addExpense" */ './views/controlPanel.vue')
+      ,meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/control/:id',
       name: 'control',
       component: () => import(/* webpackChunkName: "addExpense" */ './components/Control.vue')
+      ,meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/nuevo/control',
       name: 'addControl',
       component: () => import(/* webpackChunkName: "addExpense" */ './views/addControl.vue')
+      ,meta: {
+        requiresAuth: true
+      }
     },
     {
-      path: '/nuevo/gasto',
+      path: '/nuevo/gasto/:id',
       name: 'addExpense',
       component: () => import(/* webpackChunkName: "addExpense" */ './views/addExpense.vue')
+      ,meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/config',
+      name: 'Config',
+      component: () => import(/* webpackChunkName: "login" */ './views/Config.vue'),meta: {
+        requiresAuth: true
+      }
     }
   ]
 })

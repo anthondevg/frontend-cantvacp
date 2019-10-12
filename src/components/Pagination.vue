@@ -25,7 +25,7 @@
                 perPage: 4,
                 rangeBefore: 3,
                 rangeAfter: 4,
-                order: 'is-centered',
+                order: 'is-right',
                 size: 'size',
 			}
 		},

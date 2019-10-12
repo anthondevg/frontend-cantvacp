@@ -135,7 +135,7 @@
 									<div style="font-size: 2rem; text-align: center; color: rgb(33,22,111);">
 										RPS
 										<br>
-										<p>{{descRPS}} BsS</p>
+										<p>{{parseInt(descRPS) | formattedNumber }}</p>
 									</div>
 									
 								</div>
@@ -144,7 +144,7 @@
 									<div style="font-size: 2rem; text-align: center; color: rgb(222,222,111);">
 										EPS
 										<br>
-										<p>{{descEPS}} BsS</p>
+										<p>{{parseInt(descEPS) | formattedNumber}}</p>
 									</div>
 									
 								</div>
@@ -153,7 +153,7 @@
 									<div style="font-size: 2rem; text-align: center; color: rgb(22,222,111);">
 										Ganancia
 										<br>
-										<p>{{totalIncome}} Bs.S</p>
+										<p>{{parseInt(totalIncome) | formattedNumber}}</p>
 									</div>
 									
 								</div>
@@ -211,13 +211,18 @@
 			  })
 
 		},
+		filters: {
+	    	formattedNumber (value) {
+	     		return `${value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')} Bs`
+	    	}
+	  	},
 		methods: {
 			parseDate(){
 				this.date = this.date.getFullYear() + "-" + (this.date.getMonth() + 1) + "-" + this.date.getDate();
 			},
 			calculateData(){
-				this.descRPS = this.totalAmount * 0.180;
-				this.descEPS = this.totalAmount * 0.03;
+				this.descRPS = this.totalAmount * (this.$store.getters.config_DRSE/100);
+				this.descEPS = this.totalAmount * (this.$store.getters.config_DEPS/100);
 
 				this.totalIncome = this.totalAmount - (this.descRPS + this.descEPS); 
 			},

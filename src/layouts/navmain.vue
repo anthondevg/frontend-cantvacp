@@ -22,12 +22,13 @@
 	            </b-navbar-item>
 	            <b-navbar-item v-if="loggedIn" icon="earth" tag="router-link" :to="{ path: '/controles' }">
 	            	<b-icon icon="table" style="margin-right: 5px;"></b-icon>
-            
 	                Controles
 	            </b-navbar-item>
-	            <b-navbar-item v-if="loggedIn" icon="pencil" tag="router-link" :to="{ path: '/dashboard' }">
-	            	<b-icon icon="earth" style="margin-right: 5px;"></b-icon>
-	                Dashboard
+	            
+				<b-navbar-item tag="router-link" v-if="loggedIn" :to="{ path: '/config' }">
+	                <b-icon icon="engine" style="margin-right: 5px;"></b-icon>
+	               
+	                Configuracion
 	            </b-navbar-item>
 
 	            <b-navbar-item tag="router-link" :to="{ path: '/about' }">
@@ -35,6 +36,7 @@
 	               
 	                Acerca
 	            </b-navbar-item>
+
 	        </template>
 
 	        <template slot="end">

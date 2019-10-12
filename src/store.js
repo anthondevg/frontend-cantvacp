@@ -19,14 +19,18 @@ export default new Vuex.Store({
     expenses: [],
     // ganancia total de budgets
     globalTotal: 0,
+    // gasto total 
+    totalExpense: 0,
+    totalIncome: 0,
     // el id del usuario 
     user_id: localStorage.getItem('user_id') || null,
-    // no funciona esto todavia
-    types: 'nah',
     // aqui guardaremos la data para los controles 
     controls: [],
-    current_control_id: localStorage.getItem('current_control_id') || null
+    current_control_id: localStorage.getItem('current_control_id') || null,
     // 
+    DRSE: localStorage.getItem('DRSE') || 0,
+    DEPS:  localStorage.getItem('DEPS') || 0,
+    DOLAR: localStorage.getItem('DOLAR') || 0
   },
   mutations: {
   	// we cannot update the state directly 
@@ -86,6 +90,15 @@ export default new Vuex.Store({
     setCurrentControl(state,data){
       localStorage.setItem('current_control_id',data.control_id);
       state.current_control_id = data.control_id;
+    },
+    getConfig(state,data){
+      localStorage.setItem('DRSE',data.DRSE);
+      localStorage.setItem('DEPS',data.DEPS);
+      localStorage.setItem('DOLAR',data.DOLAR);
+
+      state.DRSE = data.DRSE;
+      state.DEPS = data.DEPS;
+      state.DOLAR = data.DOLAR;
     }
   },
   getters: {
@@ -112,9 +125,31 @@ export default new Vuex.Store({
     },
     current_control_id(state){
       return state.current_control_id
+    },
+    config_DRSE(state){
+      return state.DRSE
+    },
+    config_DEPS(state){
+      return state.DEPS
+    },
+    config_DOLAR(state){
+      return state.DOLAR
     }
+
   },
   actions: {
+    getConfig(context){
+      return axios.post('/config/get',{
+          id: this.state.user_id,
+        })
+        .then(res=>{
+          context.commit('getConfig',res.data)
+          return res.data;
+        })
+        .catch(error=>{
+          console.log(error)
+        })
+    },
     setCurrentControl(context,data){
       context.commit('setCurrentControl',data)
     },

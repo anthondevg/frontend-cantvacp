@@ -1,12 +1,15 @@
 <template>
 	
 	<div class="container">
-		<h1 c><b-icon icon="table" style="margin-right: 5px;"></b-icon>Control | {{this.$route.params.id}}</h1>
+		<h1><b-icon icon="table" style="margin-right: 5px;"></b-icon>Control | {{this.$route.params.id}}</h1>
               
   		<hr>
 		
 		<TotalIncome 
+
 			v-bind:totalIncome="totalIncome"
+			v-bind:totalExpense="totalExpense"
+			v-bind:totalAfterExpense="totalAfterExpense"
 			v-bind:totalInDollars="totalInDollars"
 			v-bind:totalInDollarsAirTM="totalInDollarsAirTM"
 		/>
@@ -21,16 +24,9 @@
                 Añadir Presupuesto
             </b-button>
 
-            <b-button 
-                  tag="router-link"
-                  :to="{ name: 'addExpense'}" 
-                  type="is-danger"
-                  icon-right="plus">
-                Añadir Gasto
-            </b-button>
         </div>
 
-        <h1 style="font-size: 2.4rem; font-family: Roboto;">Presupuestos</h1>
+        <h1 style="font-size: 2.4rem;">Presupuestos</h1>
 	
 		<div class="columns">
 			<div class="column">
@@ -82,92 +78,113 @@
 			/>
 		</div>
 
-		<table v-if="budgets.length > 0 && !loading" style="width: 100%;" class="card table mb-3 center is-striped">
+		<Pagination v-bind:total="total"/>
+		<br>
+		<table v-if="budgets.length > 0 && !loading" style="width: 100%;" class="card table mb-3 center is-responsive is-striped">
 		  
 		  <thead>
 		    <tr>
 				
-		      <th scope="col">Nro Pedido</th>
-		      <th scope="col">Nro Factura</th>
-		      <th scope="col">Monto</th>
+		      <th scope="col">ID</th>
 		      <th scope="col">Descripcion</th>
 		     
-		      <th scope="col">DRSE</th>
+		      <th scope="col">Monto</th>
+		      
 
 		      <th scope="col">Fecha</th>
-		      <th scope="col">DEPS</th>
 		      <th scope="col">Ganancia</th>
 		      <th scope="col">Acciones</th>
 
 		    </tr>
 		  </thead>
-		  <tbody>
+		  <tbody v-for="budget in budgets" v-if="budget.type == type || type == 'ALL'">
 		  	
-		    <tr class="budget-el" v-bind:style="{ borderLeft: borderLeft[budget.status] }" v-bind:value="budget.id" v-for="budget in budgets" v-if="budget.type == type || type == 'ALL'">
+		    <tr class="budget-el" v-bind:style="{ borderLeft: borderLeft[budget.status] }" v-bind:value="budget.id" >
 				
+				<!--
 		    	<td>{{ budget.nroOrder }}</td>
-		    	<td>{{ budget.nroInvoice }}</td>
-		    	<td>{{ parseInt(budget.totalAmount) | formattedNumber }}</td>
+		    	<td>{{ budget.nroInvoice }}</td>-->
+		    	<td>{{budget.id}}</td>
 		    	<td>{{ budget.description}}</td>
-		    
 		    	
-		    	<td>{{ parseInt(budget.DRSE) | formattedNumber}}</td>
+		    	<td>{{ parseInt(budget.totalAmount) | formattedNumber }}</td>
 		    	
 		    	<td>{{ budget.date}}</td>
-		    	<td>{{ parseInt(budget.DEPS) | formattedNumber}}</td>
 		    	<td>{{ parseInt(budget.totalIncome) | formattedNumber}}</td>
 		    	<td>
+		    		
 		    		<b-button 
 		    			tag="router-link"
 		    			:to="{ name: 'presupuesto', params: {id: budget.id}}" 
-		    			type="is-link"
+		    			type="is-success"
                 		icon-right="pencil" />
+					
+		    		<!--
 
-		    		<b-button type="is-danger" icon-right="delete" v-on:click="deleteBudget(budget.id)" />
-		    	</td>		    	
+		    			<b-button 
+		                  tag="router-link"
+		                  :to="{ name: 'addExpense'}" 
+		                  type="is-warning"
+		                  icon-right="plus">
+					-->
+		    			<b-button type="is-danger" icon-right="delete" v-on:click="deleteBudget(budget.id)" />
+		    	</td>
+
+		    	
+		    </tr>
+
+		    <tr style="width: 100%">
+		    	
+		    	<td colspan="6">
+		    		<toggle-details-item
+		    		:budgetIncome="budget.totalIncome"
+		    		:type="type"
+			    	:budget="budget" 
+					:expenses="budget.budget_expenses"
+			    	/>
+		    	</td>
+		    </tr>
+		  </tbody>
+		</table>
+		Gastos
+		<table v-if="expenses.length > 0 && !loading" style="width: 100%;" class="card table mb-3 center is-responsive is-striped">
+		  
+		  <thead>
+		    <tr>
+				
+		      <th scope="col">ID</th>
+		      <th scope="col">Descripcion</th>
+		     
+		      <th scope="col">Monto</th>
+
+		    </tr>
+		  </thead>
+		  <tbody v-for="expense in expenses">
+		  	
+		    <tr class="budget-el" v-bind:value="expense.id" >
+				
+				
+		    	<td>{{expense.id}}</td>
+		    	<td>{{ expense.description}}</td>
+		    	
+		    	<td>{{ parseInt(expense.amount) | formattedNumber }}</td>
+		    
+		    		<b-button type="is-danger" icon-right="delete" v-on:click="test(expense.id)" />
+		    	</td>
+
 		    </tr>
 		  </tbody>
 		</table>
 
-		<Pagination v-bind:total="total"/>
-		
-		<div class="expenses">
-			<h1 style="font-size: 2.4rem; font-family: Roboto;">Gastos</h1>
-			<hr>
-			<!-- convertir a componente ! -->
-			<table v-if="expenses.length > 0 && !loading" style="width: 100%;" class="card table mb-3 center is-striped">
-			  
-			  <thead>
-			    <tr>
-			      <th scope="col">Descripcion</th>
-			      <th scope="col">Monto</th>
-			      <th scope="col">Acciones</th>
-			    </tr>
-			  </thead>
-		  		<tbody>
-					
-					 <tr class="budget-el" v-bind:value="expense.id" v-for="expense in expenses">
-						
-				    	<td>{{ expense.description }}</td>
-				    	<td>{{ expense.amount }}</td>
-				    	
-				    	<td>
-				    		<b-button 
-				    			tag="router-link"
-				    			:to="{ name: 'gasto', params: {id: expense.id}}"
-				    			type="is-link"
-		                		icon-right="pencil" />
-
-				    		<b-button type="is-danger" icon-right="delete" v-on:click="deleteExpense(expense.id)" />
-				    	</td>		    	
-				    </tr>
-		  		</tbody>
-			</table>
+		<div>
+			<div>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Qui laudantium veniam consequuntur tempora odio provident corporis esse consectetur vitae quis saepe aut dolores ipsa, harum ex maxime temporibus. Amet, perspiciatis.</div>
+			<div>Qui ipsam dolore maiores perferendis accusamus tempore rerum dicta assumenda quas, cum ipsum eum facere soluta mollitia blanditiis debitis labore iusto error sunt magnam laudantium quis quia corporis, obcaecati, optio.</div>
 		</div>
 	</div>
 </template>
 
 <script>
+
 	import axios from 'axios'
 	import { AtomSpinner } from 'epic-spinners'
 	import { HalfCircleSpinner } from 'epic-spinners'
@@ -175,7 +192,7 @@
 	import TotalIncome from './TotalIncome.vue';
 	import EmptyControlMsg from './emptyControlMsg.vue';
 	import Pagination from './Pagination.vue';
-
+	import ToggleDetailsItem from './ToggleDetailsItem.vue';
 	// setting up the endpoint !!!!!!!
 	axios.defaults.baseURL = process.env.VUE_APP_API_ENDPOINT;
  	
@@ -207,17 +224,33 @@
 			OrbitSpinner,
 			TotalIncome,
 			EmptyControlMsg,
-			Pagination
+			Pagination,
+			ToggleDetailsItem
 		},
 		computed: {
+			totalExpense(){
+				let total = 0;
+				this.expenses.forEach(expense=>{
+					total += parseInt(expense.amount);
+				});
+				
+				this.$store.state.totalExpense = total;
+				return parseInt(total);
+			},
 			totalIncome(){
 				let total = 0;
 				this.globalBudgets.forEach(budget=>{
 					total += parseInt(budget.totalIncome);
 				});
 
-				this.$store.state.globalTotal += total;
+				this.$store.state.globalTotal = parseInt(total);
 				return parseInt(total);
+			},
+			totalAfterExpense(){
+
+				let n = parseInt(this.totalIncome - this.totalExpense);
+				this.$store.state.totalIncome = n;
+				return n;
 			},
 			totalInDollars(){
 				return this.totalIncome / 20000;
@@ -241,6 +274,10 @@
 	    	}
 	  	},
 		methods: {
+			toggle(){
+				console.log('toggle in parent')
+				this.$eventHub.$emit('toggle');
+			},
 			deleteBudget(id){
 
 				if(window.confirm('Estas seguro?')){
@@ -273,6 +310,9 @@
 					from: this.from,
 					to: this.to
 				});
+			},
+			showDetails(id){
+
 			}
 		},
 		created: function(){

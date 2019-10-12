@@ -6,6 +6,7 @@ import NavMain from './layouts/navmain.vue'
 import VuePageTransition from 'vue-page-transition'
 import Buefy from 'buefy'
 import 'buefy/dist/buefy.css'
+Vue.prototype.$eventHub = new Vue(); // Global event bus
 
 Vue.use(Buefy)
 Vue.use(VuePageTransition)
@@ -25,8 +26,7 @@ router.beforeEach((to, from, next) => {
   } else if (to.matched.some(record => record.meta.requiresVisitor)) {
     if (store.getters.loggedIn) {
       next({
-        name: 'dashboard',
-        name: 'newBudget'
+        name: 'controlPanel'
       })
     } else {
       next()
