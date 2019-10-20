@@ -28,9 +28,10 @@ export default new Vuex.Store({
     controls: [],
     current_control_id: localStorage.getItem('current_control_id') || null,
     // 
-    DRSE: localStorage.getItem('DRSE') || 0,
-    DEPS:  localStorage.getItem('DEPS') || 0,
-    DOLAR: localStorage.getItem('DOLAR') || 0
+    DRSE: localStorage.getItem('DRSE') || 18,
+    DEPS:  localStorage.getItem('DEPS') || 2,
+    DOLAR: parseInt(localStorage.getItem('DOLAR')) || 0,
+    DOLAR_OFFLINE: localStorage.getItem('DOLAR_OFFLINE') || false,
   },
   mutations: {
   	// we cannot update the state directly 
@@ -91,14 +92,37 @@ export default new Vuex.Store({
       localStorage.setItem('current_control_id',data.control_id);
       state.current_control_id = data.control_id;
     },
+    setDollar_Offline(state,data){
+      localStorage.setItem('DOLAR_OFFLINE',data.DOLAR_OFFLINE);
+      state.DOLAR_OFFLINE = data.DOLAR_OFFLINE;
+    },
     getConfig(state,data){
       localStorage.setItem('DRSE',data.DRSE);
       localStorage.setItem('DEPS',data.DEPS);
-      localStorage.setItem('DOLAR',data.DOLAR);
 
       state.DRSE = data.DRSE;
       state.DEPS = data.DEPS;
-      state.DOLAR = data.DOLAR;
+
+      if(localStorage.getItem('DOLAR_OFFLINE') == 'true'){
+        
+        console.log('seteando valor offline');
+
+        localStorage.setItem('DOLAR',data.DOLAR);
+        state.DOLAR = parseInt(data.DOLAR); 
+      }else{
+        console.log('seteando valor api')
+        
+        axios.get('https://s3.amazonaws.com/dolartoday/data.json')
+          .then(res=>{
+            let d = res.data.USD.dolartoday;
+            localStorage.setItem('DOLAR',d);
+            state.DOLAR = parseInt(d);
+          })
+          .catch(err=>{
+            console.log(err);
+            alert('Error consultando dolarToday. Intente de nuevo o active el dolar offline');
+          })
+      }
     }
   },
   getters: {
@@ -135,9 +159,18 @@ export default new Vuex.Store({
     config_DOLAR(state){
       return state.DOLAR
     }
-
   },
   actions: {
+    getDollarToday(){
+      return axios.get('https://s3.amazonaws.com/dolartoday/data.json')
+          .then(res=>{
+            return res.data.USD.dolartoday; 
+          })
+          .catch(err=>{
+            console.log(err);
+            alert('Error consultando dolarToday. Intente de nuevo o active el dolar offline');
+          })
+    },
     getConfig(context){
       return axios.post('/config/get',{
           id: this.state.user_id,
@@ -150,8 +183,11 @@ export default new Vuex.Store({
           console.log(error)
         })
     },
+    setDollar_Offline(context,data){
+      context.commit('setDollar_Offline',data);
+    },
     setCurrentControl(context,data){
-      context.commit('setCurrentControl',data)
+      context.commit('setCurrentControl',data);
     },
     // authentication actions
 
@@ -273,8 +309,8 @@ export default new Vuex.Store({
       }
     },
     fetchBudgets(context,data){
-      if(data.control_id){
-        return axios.get(`/budget/getAll/id/${this.state.user_id}/${data.control_id}?page=${data.currentPage}`)
+    
+        return axios.get(`/budget/getAll/id/${this.state.user_id}/${data.control_id}/${data.perPage}?page=${data.currentPage}`)
          .then(res=>{
             context.commit('fetchBudgets',res.data.data)
             return res.data;
@@ -282,16 +318,7 @@ export default new Vuex.Store({
          .catch(err=>{
             console.log('Error fetching budgets',err)
          })
-      }else{
-          return axios.get(`/budget/getAll/id/${this.state.user_id}?page=${data.currentPage}`)
-         .then(res=>{
-            context.commit('fetchBudgets',res.data.data)
-            return res.data;
-         })
-         .catch(err=>{
-            console.log('Error fetching budgets',err)
-         })
-      }
+      
     },
     fetchTypes(context){
       context.commit('fetchTypes')

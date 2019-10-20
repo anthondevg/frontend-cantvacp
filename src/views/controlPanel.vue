@@ -1,53 +1,55 @@
 <template>
   <div class="container controlPanel">
   	<h1 style="font-size: 1.5rem;">Controles</h1>
-              
+    <transition name="slide">
+    <b-button 
+      v-if="!addingControl"
+      type="is-link"
+      @click="toggleInput"
+      icon-right="plus">
+      Nuevo Control
+    </b-button>      
+    </transition>
+    <transition name="slide-fade">
+      <div class="form-control" v-if="addingControl" >
+
+        <h3 style="font-size: 1.2em;">¿Que nombre le ponemos?</h3>
+        <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+            
+          <form action="POST" @submit.prevent="addControl">
+            
+            <input 
+              autofocus 
+              class="add_Control_Input" 
+              placeholder="ACME"
+              type="text"  
+              v-model="control_name" 
+              name="control_name"/>   
+            
+            <b-button native-type="submit" type="is-link" icon-right="check">Listo</b-button>
+
+          </form>
+       
+          <b-button type="is-danger" @click="cancelAdd" icon-right="cancel">Cancelar</b-button>
+       
+        </div>
+        
+      </div>  
+    </transition>      
   	<hr>
 
-  	<template>
-    <div class="container">
-      <div class="columns">
-        <div class="column card">
-          <h1 style="font-size: 2.4rem;"></h1>
+    
+        <div class="grid-container" >
+          <b-button
           
-          <div class="card add-div">
+            tag="router-link"
+            v-for="control in controls"
+            :to="{ name: 'control', params: {id: control.id}}" 
+                class="grid-item control-box">
             
-            <b-button 
-                  tag="router-link"
-                  :to="{ name: 'addControl'}" 
-                  type="is-link"
-                        icon-right="table">
-                Añadir Control
-            </b-button>
-
-            <b-button 
-                  tag="router-link"
-                  :to="{ name: 'addType'}" 
-                  type="is-success"
-                  icon-right="earth">
-                Añadir Tipo
-            </b-button>
-          </div>
-          <ul>
-            <li v-for="control in controls" class="card control-card" >   
-                <h1 style="font-size: 1.5rem;">{{control.id}} | {{control.name}}</h1>
-                
-                <div>
-                  <b-button 
-                  tag="router-link"
-                  :to="{ name: 'control', params: {id: control.id}}" 
-                  type="is-link"
-                        icon-right="eye" />
-
-                <b-button type="is-danger" icon-right="delete" v-on:click="deleteControl(control.id)" />
-                </div>
-            </li>
-          </ul>
-        </div>
+            <h1 style="font-size: 2rem;"> {{control.name}}</h1> 
+          </b-button>
       </div>
-    </div>
-
-    </template>
   </div>
 </template>
 
@@ -64,11 +66,34 @@
     name: 'controlPanel',
     data(){
       return {
+        addingControl: false,
+        userId: this.$store.getters.user_id,
+        control_name: ''
       }
     },
     methods: {
+      toggleInput(){
+        this.addingControl = !this.addingControl
+      },
+      cancelAdd(){
+         this.addingControl = false;
+         this.control_name = '';
+      },
+      addControl(){
+        this.$store.dispatch('newControl',{
+          userId: this.userId,
+          name: this.control_name
+        })
+        .then(response=>{
+            this.addingControl = false;
+            this.$buefy.toast.open({
+                message: 'Control agregado!',
+                type: 'is-link'
+            });
+            this.$store.dispatch('fetchControls');
+        })
+      },
       deleteControl(id){
-
           if(window.confirm('Estas seguro?')){
             axios.post('/control/delete',{
               id: id
@@ -91,29 +116,74 @@
     },
     created: function(){
         this.$store.dispatch('fetchControls')
-    },
+    }
   }
 </script>
 
 <style>
   
-  .control-card{
-    width: 100%; 
-    display: flex;
-    justify-content: space-between;
-    padding: 10px; 
-    border-radius: 5px; 
-    margin: 2px;
-    margin-bottom: 5px;
-    background-color: rgb(250,254,254);
-    border: 2px solid rgb(45,105,100);
+    .grid-container {
+      display: grid;
+      grid-template-columns: auto auto auto;
+    }
+    .grid-item {
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 20px;
+      text-align: center;
+    }
+
+  .controls-wrapper{
+    display: grid;
+    grid-template-columns: auto auto auto;
+  }
+  .control-box{
+    background: linear-gradient(left, rgb(33,33,133), rgb(33,33,199));
+    border-radius: 10px;
+    color: white;
+    min-width: 33%;
+    min-height: 200px;
+    margin: 10px;
+    transition: all ease .4s;
+  }
+  
+  .control-box:hover{
+    color: white;
+    background: linear-gradient(right, rgb(33,33,255),rgb(33,33,133));
+    transform: translateY(5px);
+    box-shadow: 0px 2px 20px grey;
+  }
+  
+  .add_Control_Input{
+    border: none;
+    font-size: 1.6em;
+    border-bottom: 2px solid rgb(33,33,133);
+    margin-right: 3px;
+    transition: all ease .4s;
   }
 
-  .control-card:hover{
-    background-color: rgb(254,254,254); 
+  .add_Control_Input:active{
+    outline: none;
+     
   }
-
+  .add_Control_Input:focus{
+    outline: none;
+    border-bottom: 2px solid rgb(33,33,255);
+  }
   .add-div{
     padding: 5px;
+  }
+
+  /* Enter and leave animations can use different */
+  /* durations and timing functions.              */
+  .slide-fade-enter-active {
+    transition: all .3s ease;
+  }
+  .slide-fade-leave-active {
+    transition: all .4s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  }
+  .slide-fade-enter, .slide-fade-leave-to
+  /* .slide-fade-leave-active below version 2.1.8 */ {
+    transform: translateX(10px);
+    opacity: 0;
   }
 </style>

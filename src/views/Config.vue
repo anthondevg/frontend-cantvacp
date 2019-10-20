@@ -21,9 +21,17 @@
 								name="DOLAR" 
 								v-model.number="DOLAR" 
 								placeholder="$12.000.USD" 
+								:disabled="DOLAR_OFFLINE == false"
 								>
 							</b-input>
+							
 						</b-field>
+						<b-field>
+					            <div class="control">
+					                <b-switch 
+								v-on:click="toggleDOLAR_OFFLINE" v-model="DOLAR_OFFLINE">Usar valor del Dolar Offline</b-switch>
+					            </div>
+					        </b-field>
 						<b-button native-type="submit" type="is-link" icon-right="earth">Guardar</b-button>
 					</form>
 				</div>
@@ -43,14 +51,15 @@
 			return {
 				DRSE: 0,
 				DEPS: 0,
-				DOLAR: ''
+				DOLAR: '',
+				DOLAR_OFFLINE: this.$store.state.DOLAR_OFFLINE == 'true'
 			}
 		},
 		methods: {
-
+			
 			setConfig(){
 				console.log('set config');
-
+				// setear configuracion en base de datos
 				axios.post('/config/set',{
 		            id: this.$store.getters.user_id,
 		            DRSE: this.DRSE,
@@ -59,14 +68,32 @@
 		          })
 		          .then(res=>{
 
+		          	// usar valor del dolar offline o api en vuex
+		          	 this.$store.dispatch('setDollar_Offline',{
+				    	DOLAR_OFFLINE: this.DOLAR_OFFLINE
+				    })
+				    .then(res=>{
+				    	console.log(res);
+				    })
 
+				    // ajustar nueva configuración en componente
 				    this.$store.dispatch('getConfig')
 				    	.then(config=>{
 				          	this.DRSE = config.DRSE;	
 				          	this.DEPS = config.DEPS;	
 				          	this.DOLAR = config.DOLAR;	
+				       			
+				                this.$buefy.toast.open({
+				                    message: 'Configuración Guardada!',
+				                    type: 'is-link'
+				                })
+            
 				          })
 				          .catch(error=>{
+				          	this.$buefy.toast.open({
+				                    message: 'Algo salio mal. Intenta Nuevamente.',
+				                    type: 'is-danger'
+				                })
 				            console.log(error)
 				          })
 
@@ -89,19 +116,7 @@
             }
         },
 		created: function(){
-			/*axios.post('/config/get',{
-		            id: this.$store.getters.user_id,
-		          })
-		          .then(res=>{
-		          	this.DRSE = res.data.DRSE;	
-		          	this.DEPS = res.data.DEPS;	
-		          	this.DOLAR = res.data.DOLAR;	
-		            console.log(res);
-		          })
-		          .catch(error=>{
-		            console.log(error)
-		          })*/
-
+		
 		    this.$store.dispatch('getConfig')
 		    	.then(config=>{
 		          	this.DRSE = config.DRSE;	

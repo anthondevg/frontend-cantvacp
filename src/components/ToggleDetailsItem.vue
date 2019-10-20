@@ -1,56 +1,26 @@
 <template>
-	<div v-if="budget.type == this.$attrs.type || type == 'ALL'">
-		<b-button 
-			style="margin-bottom: 5px;"
-			@click="toggle"
-			type="is-default"
-            icon-right="eye" />
-		<div v-show="isActive" class="card card-details">
+	<div>
+		<transition name="slide-fade">
 			
-			<div class="fancy-card card" style="color: grey;">
+			<div v-show="isActive" class="card card-details">
 				
-				<h3 class="div-actions-title">
-					Detalles
-				</h3>
-				<div class="detail">
-					<label>Numero de Orden: </label>{{budget.nroOrder}}
-				</div>
-				<div class="detail">
-					<label>Numero de Factura: </label>{{budget.nroInvoice}}
-				</div>
-				<div class="detail">
-					<!-- agregar badget bonito completado, pendiente, cancelado-->
-					<label>Estado: </label>{{budget.status}}
-				</div>
-				<div class="detail">
-					<label>Tipo: </label>{{budget.type}}
-				</div>
-				
-				
-		    	<div class="detail">
-					<label>Descuento RSE: </label>{{ parseInt(budget.DRSE) | formattedNumber}}
-				</div>
-
-				<div class="detail">
-					<label>Descuento EPS: </label>{{ parseInt(budget.DEPS) | formattedNumber}}
-				</div>
-		 
-		    	
-			</div>
-
+				<Details :budget="budget"/>
+			   		
 			<div class="fancy-card card">
 
 				<h3 class="div-actions-title">
 					Gastos
 				</h3>
 
-				<form action="POST" @submit.prevent="addExpense">
+				
+				<form action="POST" v-if="addingExpense" @submit.prevent="addExpense">
 
 					<div class="columns">
 						<div class="column">	
 				            <b-input 
 				            	placeholder="Descripcion del Gasto"
 				            	type="text" 
+				            	required
 				            	icon="pencil" 
 				            	v-model="description" 
 				            	name="description">		
@@ -63,6 +33,8 @@
 				            	placeholder="Monto Total p.Ej: 120.000Bs.S"
 				            	type="number" 
 				            	icon="earth" 
+				            	required
+				            	min="0"
 				            	v-model="amount" 
 				            	name="amount">		
 				           	</b-input>
@@ -75,8 +47,12 @@
 					
 				</form>
 
+				<b-button native-type="submit" v-else @click="toggleFormExpense" type="is-defaul" icon-right="plus">Nuevo gasto</b-button>
+
 				<div>
-					<table class="table is-striped is-hoverable" style="width: 100%; margin-top: 6px;">
+					<transition name="fade">
+						
+						<table v-if="sExpenses.length > 0" class="table is-bordered is-striped is-hoverable" style="width: 100%; margin-top: 6px; margin-bottom: 6px; border-radius: 5px;">
 		  
 		  				<thead>
 			    			<th scope="col">Descripcion</th>
@@ -84,80 +60,78 @@
 			    			<th scope="col">Acciones</th>
 			      
 		    			</thead>
-
+						
 		    			<tbody v-for="expense in sExpenses">
 		    				<tr>
 		    					<td>{{expense.description}}</td>
 		    					<td>
-		    						{{parseInt(expense.amount) | formattedNumber }}
+		    						<span class="badge badge--smaller badge--danger">
+    									{{parseInt(expense.amount) | formattedNumber }}
+    								</span>
 		    					</td>
 
 		    					<td>
 		    						<b-button type="is-danger" icon-right="delete" v-on:click="deleteExpense(expense.id)" />
 		    					</td>
 		    				</tr>
+		    				
 		    			</tbody>
+
 		    		</table>
+					</transition>
 
+					<div class="no-expenses-card" v-if="sExpenses == 0">
+						<b-icon style="color: white;" icon="medal"></b-icon>
+	                
+	    				<h3 style="font-size: 2rem; color: white;">
+	    				No tienes gastos!
+	    				</h3>
+		    		</div>
 				</div>
-				
-				<h3 class="div-actions-title">
-					Monto Total {{ parseInt(budgetIncome) | formattedNumber}}
-				</h3>
-
-				<h3 class="div-actions-title" style="color: rgb(240,10,44);">
-					Gasto Total : {{ parseInt(totalExpense) | formattedNumber}}
-				</h3>
-
-				<hr>
-		
-				<h3 class="div-actions-title">
-					Ganancia Total : {{ parseInt(totalIncome) | formattedNumber }}
-				</h3>
-
-				<h3 class="div-actions-title">
-					$ {{ parseInt(totalInDollars) }} USD (DolarToday)
-				</h3>
-
-				<h3 class="div-actions-title">
-					$ {{ parseInt(totalInDollarsAirTM) }} USD (AirTM)
-				</h3>
-
+				<ResumeDetails 
+				:sExpenses="sExpenses"
+				:budgetIncome="budgetIncome"
+				/>
 			</div>
 		</div>
+		</transition>
 	</div>
 </template>
 
 <script>
 
 	import axios from 'axios'
+	import Details from './Details.vue';
+	import ResumeDetails from './ResumeDetails.vue';
 
 	// setting up the endpoint !!!!!!!
 	axios.defaults.baseURL = process.env.VUE_APP_API_ENDPOINT;
 
 	export default {
 		name: 'toggle-details-item',
-		props: ['budget','expenses','budgetIncome'],
+		props: ['budget','expenses','budgetIncome','isActive'],
 		data(){
 			return {
 				type: 'ALL',
-				isActive: false,
-
-				// data for creating of expenses
+				isActive: this.$props.isActive,
 				budget_Id: this.$props.budget.id,
 				control_Id: this.$store.getters.current_control_id,
 				user_Id: this.$store.getters.user_id,
 				description: '',
 				amount: '',
-				sExpenses: this.$props.expenses
+				sExpenses: this.$props.expenses,
+				addingExpense: false
 			}
 		},
+		components: {
+			Details,
+			ResumeDetails
+		},
 		methods: {
-			toggle(){
-				this.isActive = !this.isActive;
+			toggleFormExpense(){
+				this.addingExpense = !this.addingExpense;
 			},
 			addExpense(){
-
 				axios.post('/expense',{
 					user_Id: this.user_Id,
 					budget_Id: this.budget_Id,
@@ -185,6 +159,7 @@
 
 		            this.description = '';
 					this.amount = '';
+					this.addingExpense = false;
 		            console.log(res);
 		          })
 		          .catch(error=>{
@@ -207,42 +182,42 @@
 		          })
 			}
 		},
-		computed:{
-			totalExpense(){
-				let total = 0;
-				this.sExpenses.forEach(expenses=>{
-					total += parseInt(expenses.amount);
-				});
-
-				this.total += total;
-				return parseInt(total);
-			},
-			totalIncome(){
-				return parseInt(this.budgetIncome) - parseInt(this.totalExpense);
-			},
-			totalInDollars(){
-				return this.totalIncome / 20000;
-			},
-			totalInDollarsAirTM(){
-				return this.totalIncome / 21400;
-			},
-		},
 		filters: {
 	    	formattedNumber (value) {
 	     		return `${value.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')} Bs`
 	    	}
-	  	},
-		created: function(){
-			this.$eventHub.$on('toggle', this.toggle);
-		},
-		beforeDestroy() {
-		    this.$eventHub.$off('togle');
-		}
+	  	}
 	}
 </script>
 
 <style>
-	
+
+	.no-expenses-card{
+		padding: 10px;
+		background: linear-gradient(left, rgb(33,233,133), rgb(33,233,199));
+	    margin: 10px 1px;
+		min-height: 100px;
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		border-radius: 10px;
+		text-align: center;
+	}
+	/* Enter and leave animations can use different */
+  /* durations and timing functions.              */
+  .slide-fade-enter-active {
+    transition: all .3s ease;
+  }
+  .slide-fade-leave-active {
+    transition: all .4s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+  }
+  .slide-fade-enter, .slide-fade-leave-to
+  /* .slide-fade-leave-active below version 2.1.8 */ {
+    transform: translateX(10px);
+    opacity: 0;
+  }
 	.card-details{
 		border-radius: 5px;
 		padding: 10px;

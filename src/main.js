@@ -4,8 +4,9 @@ import router from './router'
 import store from './store'
 import NavMain from './layouts/navmain.vue'
 import VuePageTransition from 'vue-page-transition'
-import Buefy from 'buefy'
-import 'buefy/dist/buefy.css'
+import Buefy from 'buefy';
+import 'buefy/dist/buefy.css';
+
 Vue.prototype.$eventHub = new Vue(); // Global event bus
 
 Vue.use(Buefy)

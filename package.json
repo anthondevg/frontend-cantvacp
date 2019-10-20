@@ -12,6 +12,8 @@
     "buefy": "^0.8.4",
     "core-js": "^2.6.5",
     "epic-spinners": "^1.1.0",
+    "jspdf": "^1.5.3",
+    "v-money": "^0.8.1",
     "vue": "^2.6.10",
     "vue-page-transition": "^0.2.2",
     "vue-paginate": "^3.6.0",

@@ -1,10 +1,9 @@
 <template>
 	<div class="container mb-5">
 		
-		<h1 style="font-size: 2.4rem;">Crear nuevo Presupuesto</h1>
-			<hr>
+		<h1 style="font-size: 2.4rem;"><b-icon icon="pencil" style="margin-right: 5px;"></b-icon>Nuevo Anticipo</h1>
 			<template>
-				<form method="POST" @submit.prevent="newBudget">
+				<form method="POST" @submit.prevent="newAdvance">
 					<div class="columns">
 
 						<div class="column">
@@ -26,7 +25,7 @@
 					        <b-field label="Numero de Pedido"  label-position="on-border" expanded>
 					            <b-input 
 					            	required
-					            	placeholder="889911"
+					            	placeholder="911"
 					            	type="number" 
 					            	native.type="number"
 					            	icon="earth" 
@@ -67,7 +66,7 @@
 						<div class="column">	
 					        <b-field label="Descripción"  label-position="on-border" expanded>
 					            <b-input 
-					            	placeholder="APURE VENTA"
+					            	placeholder="Anticipo 1"
 					            	type="text" 
 					            	icon="pencil" 
 					            	v-model="description" 
@@ -91,7 +90,7 @@
 					<div class="columns">
 
 						<div class="column">
-							<b-field label="Monto Global"  label-position="on-border" expanded>
+							<b-field label="Monto"  label-position="on-border" expanded>
 								<div class="control">
 									
 									<money 
@@ -105,63 +104,9 @@
 						    			</money>
 								</div>
 								           	
-					        </b-field>
-							<b-input
-								type="number" 
-								name="descRPS" 
-								v-model="descRPS" 
-								disabled 
-								placeholder="0. BsS" required
-							>	
-							</b-input>
-							<br>
-							<b-input
-								type="number" 
-								name="descEPS" 
-								v-model="descEPS" 
-								disabled 
-								placeholder="0. BsS" 
-								required>
-							</b-input>	
-							<br>
-
-							<b-input type="number" name="totalIncome" v-model="totalIncome" disabled placeholder="0. BsS" value="0" required/>
-						
+					        </b-field>		
 					  		
 						</div>
-						<div class="column">
-							<div class="columns">
-								
-								<div class="column ">
-									<div style="font-size: 2rem; text-align: center; color: rgb(33,22,111);">
-										RPS
-										<br>
-										<p>{{parseInt(descRPS) | formattedNumber }}</p>
-									</div>
-									
-								</div>
-								
-								<div class="column">
-									<div style="font-size: 2rem; text-align: center; color: rgb(222,222,111);">
-										EPS
-										<br>
-										<p>{{parseInt(descEPS) | formattedNumber}}</p>
-									</div>
-									
-								</div>
-								
-								<div class="column">
-									<div style="font-size: 2rem; text-align: center; color: rgb(22,222,111);">
-										Ganancia
-										<br>
-										<p>{{parseInt(totalIncome) | formattedNumber}}</p>
-									</div>
-									
-								</div>
-							
-							</div>
-						</div>
-
 					</div>
 
 					<div class="block">
@@ -181,7 +126,7 @@
 	axios.defaults.baseURL = process.env.VUE_APP_API_ENDPOINT;
 
 	export default {
-		name: 'newBudget',
+		name: 'newAdvance',
 		data() {
 			return {
 				userId: this.$store.getters.user_id,
@@ -233,28 +178,19 @@
 			parseDate(){
 				this.date = this.date.getFullYear() + "-" + (this.date.getMonth() + 1) + "-" + this.date.getDate();
 			},
-			calculateData(){
-				this.descRPS = this.totalAmount * (this.$store.getters.config_DRSE/100);
-				this.descEPS = this.totalAmount * (this.$store.getters.config_DEPS/100);
+			newAdvance(){
+				console.log('new advance in ')
 
-				this.totalIncome = this.totalAmount - (this.descRPS + this.descEPS); 
-			},
-			newBudget(){
-				console.log('new budget in ')
-
-				this.$store.dispatch('newBudget',{
-					userId: this.userId,
+				axios.post('/advance',{
+					user_Id: this.userId,
 					control_Id: this.control_Id,
+					type: this.type,
 					nroOrder: new Number(this.nroOrder),
 					nroInvoice: new Number(this.nroInvoice),
-					totalAmount: new Number(this.totalAmount),
-					description: this.description,
 					date: this.date,
+					description: this.description,
 					status: this.status,
-					type: this.type,
-					descRPS: this.descRPS,
-					descEPS: this.descEPS,
-					totalIncome: this.totalIncome
+					totalAmount: new Number(this.totalAmount),
 				})
 				.then(response=>{
 					this.$router.push({path: `/control/${this.$store.getters.current_control_id}`})

@@ -105,6 +105,13 @@ export default new Router({
       component: () => import(/* webpackChunkName: "login" */ './views/Config.vue'),meta: {
         requiresAuth: true
       }
-    }
+    },
+    {
+      path: '/nuevo/anticipo',
+      name: 'newAdvance',
+      component: () => import(/* webpackChunkName: "login" */ './views/newAdvance.vue'),meta: {
+        requiresAuth: true
+      }
+    },
   ]
 })
