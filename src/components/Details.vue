@@ -1,11 +1,12 @@
 <template>
-	<div>
+	<div class="details-card">
 		<b-button 
 				@click="toggle()"
 				type="is-default"
 	            icon-right="eye">Ver Detalles</b-button>
 
-		<div v-show="isActive">
+		<transition name="fade">
+			<div v-show="isActive">
 
 			<div class="detail">
 					<label>Numero de Orden: </label>{{budget.nroOrder}}
@@ -22,19 +23,22 @@
 				</div>
 				
 		    	<div class="detail">
-					<label>Descuento RSE </label>
 					<span class="badge badge--smaller badge--danger">
-    				{{ parseInt(budget.DRSE) | formattedNumber}}</span>
+    				
+					<label>Descuento RSE </label>
+					{{ parseInt(budget.DRSE) | formattedNumber}}</span>
 				</div>
 
 				<div class="detail">
-					<label>Descuento EPS </label>
 					<span class="badge badge--smaller badge--danger">
-    					{{ parseInt(budget.DEPS) | formattedNumber}}
+    				
+					<label>Descuento EPS </label>
+						{{ parseInt(budget.DEPS) | formattedNumber}}
     				</span>
 				</div>
 
 		</div>
+		</transition>
 	</div>
 </template>
 
@@ -60,3 +64,19 @@
 	  	}
 	}
 </script>
+
+<style>
+	.details-card{
+		background: linear-gradient(left, rgb(33,33,153), rgba(33,33,199,0.5));
+	    color: white;
+	    margin-bottom: 10px;
+	    padding: 10px;
+	    display: flex;
+	    border-radius: 3px;
+	    justify-content: space-between;
+	    align-items: center;
+	    text-align: center;
+		transition: all ease .3s;
+	}
+
+</style>

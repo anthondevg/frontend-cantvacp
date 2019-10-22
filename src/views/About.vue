@@ -4,8 +4,7 @@
     	<div class="column card">
     		<b-icon icon="ghost" style="margin-right: 5px;"></b-icon>
     		<p>
-			CANTVACP es una aplicación que permite <br>
-				el control de presupuestos de una <br>manera organizada y con una <br>interfaz dinamica.</p>
+			CANTVACP</p>
 			<hr>
 			<p>Construido con <a href="https://laravel.com">Laravel</a>, <a href="https://vuejs.org/">Vue.js</a> y MySQL.</p>
 			<hr>

@@ -1,12 +1,16 @@
 
 <template>
-	<div class="container">
+	<div class="container form-container mb-5">
 		
-		<h1 style="font-size: 2.4rem;">Editar Presupuesto</h1>
-
+		<div class="desc-card">
+			
+			<h1 class="desc-title">Editar Presupuesto</h1>
+			<b-icon icon="earth" class="desc-icon"></b-icon>
+	                
+		</div>
 			<hr>
 			<template>
-				<form method="POST" @submit.prevent="updateBudget">
+				<form method="POST" class="inner-form--wrapper" @submit.prevent="updateBudget">
 					<div class="columns">
 
 						<div class="column">
@@ -164,8 +168,8 @@
 
 					</div>
 
-					<div class="block">
-						<b-button native-type="submit" type="is-link" icon-right="save">Guardar</b-button>
+					<div style="display: flex; flex-direction: row-reverse;">
+						<b-button native-type="submit" class="save-button" type="is-link" icon-right="save">Guardar</b-button>
 					</div>
 				</form>
 			</template>
@@ -300,3 +304,43 @@
 		}
 	}
 </script>
+
+<style>
+	
+	.form-container{
+		background-color: white;
+		box-shadow: 0px 1px 10px rgba(33,33,33,0.2);
+		border-radius: 3px;
+		margin-top: 20px;
+		margin-bottom: 20px;
+	}
+
+	.desc-card{
+		background: linear-gradient(left, rgb(33,33,133), rgb(33,33,199));
+	    color: white;
+	    margin-bottom: 10px;
+	    padding: 10px;
+	    display: flex;
+	    justify-content: space-between;
+	    align-items: center;
+	}
+	.desc-icon{
+		background-color: white;
+		font-size: 2rem;
+		color: rgb(33,33,133);
+		border-radius: 100px;
+		padding: 20px;
+	}
+	.desc-title{
+		font-size: 2em;
+	}
+
+	.inner-form--wrapper{
+		padding: 20px;
+	}
+	.save-button{
+		font-size: 1.4rem; width: 30%;
+		background: linear-gradient(left, rgb(33,33,133), rgb(33,33,199));
+	    
+	}
+</style>
