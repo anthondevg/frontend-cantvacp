@@ -1,6 +1,8 @@
 <template>
   <div class="container controlPanel">
+
   	<h1 style="font-size: 1.5rem;">Controles</h1>
+    
     <transition name="slide">
     <b-button 
       v-if="!addingControl"
@@ -10,6 +12,7 @@
       Nuevo Control
     </b-button>      
     </transition>
+
     <transition name="slide-fade">
       <div class="form-control" v-if="addingControl" >
 
@@ -39,17 +42,19 @@
   	<hr>
 
     
-        <div class="grid-container" >
-          <b-button
-          
-            tag="router-link"
+        <div class="grid-container" v-if="controls.length > 0">
+          <controlCard 
+            style="width: 100%;"
             v-for="control in controls"
-            :to="{ name: 'control', params: {id: control.id}}" 
-                class="grid-item control-box">
-            
-            <h1 style="font-size: 2rem;"> {{control.name}}</h1> 
-          </b-button>
-      </div>
+            :control="control"
+            />
+        </div>
+
+        <div v-else>
+          <EmptyControlMsg 
+            msg="No tienes controles aún. Agrega algunos."
+          />
+        </div>
   </div>
 </template>
 
@@ -58,7 +63,9 @@
 
 <script>
   import axios from 'axios'
-
+  import controlCard from './controlCard.vue';
+  import EmptyControlMsg from '../components/emptyControlMsg.vue';
+  
   // setting up the endpoint !!!!!!!
   axios.defaults.baseURL = process.env.VUE_APP_API_ENDPOINT;
 
@@ -70,6 +77,10 @@
         userId: this.$store.getters.user_id,
         control_name: ''
       }
+    },
+    components: {
+      controlCard,
+      EmptyControlMsg
     },
     methods: {
       toggleInput(){
@@ -122,37 +133,11 @@
 
 <style>
   
-    .grid-container {
-      display: grid;
-      grid-template-columns: auto auto auto;
-    }
-    .grid-item {
-      background-color: rgba(255, 255, 255, 0.8);
-      padding: 20px;
-      text-align: center;
-    }
-
-  .controls-wrapper{
+  .grid-container {
     display: grid;
     grid-template-columns: auto auto auto;
   }
-  .control-box{
-    background: linear-gradient(left, rgb(33,33,133), rgb(33,33,199));
-    border-radius: 10px;
-    color: white;
-    min-width: 33%;
-    min-height: 200px;
-    margin: 10px;
-    transition: all ease .4s;
-  }
-  
-  .control-box:hover{
-    color: white;
-    background: linear-gradient(right, rgb(33,33,255),rgb(33,33,133));
-    transform: translateY(5px);
-    box-shadow: 0px 2px 20px grey;
-  }
-  
+
   .add_Control_Input{
     border: none;
     font-size: 1.6em;

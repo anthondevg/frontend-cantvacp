@@ -1,15 +1,16 @@
 <template>
 	
 	<div class="container">
-		
+		<b-loading :is-full-page="isFullPage" :active.sync="isLoading"></b-loading>
+
 		<div class="config-card">
 			<div style="font-size: 1.5em;">
 				{{control_name}}
 			</div>
 			<b-button 
                   tag="router-link"
-                  :to="{ name: 'editar/control'}" 
-                  type="is-success"
+                  :to="{ name: 'editControl'}" 
+                  type="is-default"
                   icon-right="engine">
                 Editar Control
             </b-button>
@@ -17,12 +18,11 @@
 		</div>
 
   		<div class="card add-div">
-            
             <b-button 
             	  style="margin: 2px;"
                   tag="router-link"
                   :to="{ name: 'newBudget'}" 
-                  type="is-primary"
+                  type="is-link"
                   icon-right="earth">
                 Nuevo Presupuesto
             </b-button>
@@ -32,10 +32,21 @@
             	  style="margin: 2px;"
                   tag="router-link"
                   :to="{ name: 'newAdvance'}" 
-                  type="is-warning"
+                  type="is-link"
                   icon-right="pencil">
                 Nuevo Anticipo
             </b-button>
+            
+            <b-button 
+
+            	  style="margin: 2px;"
+                  tag="router-link"
+                  :to="{ name: 'addType'}" 
+                  type="is-warning"
+                  icon-right="pencil">
+                Nuevo Tipo
+            </b-button>
+            | Valor del Dolar: {{this.$store.getters.config_DOLAR}} BsS
 
         </div>
 	
@@ -93,6 +104,7 @@
 			<EmptyControlMsg 
 				msg="No tienes presupuestos aún. Agrega algunos."
 			/>
+			
 		</div>
 
 		Mostrar
@@ -194,7 +206,9 @@
                 // color of budgets status
                 perPage: 5,
                 meses: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
-                dias: ["Dom", "Lun", "Mar", "Mie", "Jue", "Vier", "Sab"]
+                dias: ["Dom", "Lun", "Mar", "Mie", "Jue", "Vier", "Sab"],
+                isLoading: false,
+                isFullPage: true
 			}
 		},
 		components: {
@@ -224,6 +238,7 @@
 	  	},
 		methods: {
 			fetchBudgetsFromTo(){
+				this.isLoading = true;
 				console.log('get budgets')
 				
 				let from = this.dates[0].getFullYear() + "-" + (this.dates[0].getMonth() + 1) + "-" + this.dates[0].getDate();
@@ -236,15 +251,19 @@
 				this.$store.dispatch('fetchBudgetsFromTo',{
 					from: this.from,
 					to: this.to
-				});
+				}).then(res=>{
+					this.isLoading = false;
+				})
 			},
 			fetchBudgets(){
+				this.isLoading = true;
 				this.$store.dispatch('fetchBudgets',{
 					control_id: this.$store.getters.current_control_id,
 					currentPage: this.current,
 					perPage: this.perPage
 				})
 				.then(res=>{
+					this.isLoading = false;
 					console.log(res);
 					this.loading = false;
 					this.total = res.total;

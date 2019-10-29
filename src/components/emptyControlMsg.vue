@@ -2,13 +2,6 @@
 	<div class="empty-budgets-msg">
 		<b-icon icon="ghost"></b-icon>
 		<h1 >{{msg}}</h1>
-		<b-button 
-          tag="router-link"
-          :to="{ name: 'newBudget'}" 
-          type="is-link"
-         >
-        Nuevo Presupuesto
-    	</b-button>
 	</div>
 </template>
 

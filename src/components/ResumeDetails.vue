@@ -38,7 +38,7 @@
 <script>
 	export default{
 		name: 'ResumeDetails',
-		props: ['sExpenses','budgetIncome','totalExpense'],
+		props: ['sExpenses','budgetIncome'],
 		computed:{
 			totalExpense(){
 				let total = 0;

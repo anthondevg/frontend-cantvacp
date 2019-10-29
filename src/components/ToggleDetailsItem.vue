@@ -71,7 +71,7 @@
 		    					</td>
 
 		    					<td>
-		    						<b-button type="is-danger" icon-right="delete" v-on:click="deleteExpense(expense.id)" />
+		    						<b-button type="is-default" icon-right="delete" v-on:click="deleteExpense(expense.id)">Borrar</b-button>
 		    					</td>
 		    				</tr>
 		    				
@@ -113,7 +113,6 @@
 		data(){
 			return {
 				type: 'ALL',
-				isActive: this.$props.isActive,
 				budget_Id: this.$props.budget.id,
 				control_Id: this.$store.getters.current_control_id,
 				user_Id: this.$store.getters.user_id,
@@ -194,7 +193,7 @@
 
 	.no-expenses-card{
 		padding: 10px;
-		background: linear-gradient(left, rgb(33,233,133), rgb(33,233,199));
+		background: rgba(33,33,150,0.9);
 	    margin: 10px 1px;
 		min-height: 100px;
 		width: 100%;
@@ -235,9 +234,7 @@
 	.dark-card{
 		background: linear-gradient(left,rgb(80,25,80),rgb(55,55,155));
 	}
-	.fancy-card:hover{
-	}
-
+	
 	.div-actions-title{
 		font-size: 1.3em;
 	}

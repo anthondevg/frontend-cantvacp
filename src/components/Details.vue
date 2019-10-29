@@ -67,7 +67,7 @@
 
 <style>
 	.details-card{
-		background: linear-gradient(left, rgb(33,33,153), rgba(33,33,199,0.5));
+		background: rgba(33,33,150,0.9);
 	    color: white;
 	    margin-bottom: 10px;
 	    padding: 10px;

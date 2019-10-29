@@ -113,5 +113,12 @@ export default new Router({
         requiresAuth: true
       }
     },
+    {
+      path: '/editar/control/:id',
+      name: 'editControl',
+      component: () => import(/* webpackChunkName: "login" */ './views/editControl.vue'),meta: {
+        requiresAuth: true
+      }
+    },
   ]
 })

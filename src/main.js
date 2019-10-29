@@ -6,8 +6,12 @@ import NavMain from './layouts/navmain.vue'
 import VuePageTransition from 'vue-page-transition'
 import Buefy from 'buefy';
 import 'buefy/dist/buefy.css';
+import Axios from 'axios';
+// setting up the endpoint !!!!!!!
+Axios.defaults.baseURL = process.env.VUE_APP_API_ENDPOINT;
 
 Vue.prototype.$eventHub = new Vue(); // Global event bus
+Vue.prototype.$http = Axios;
 
 Vue.use(Buefy)
 Vue.use(VuePageTransition)

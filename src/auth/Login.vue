@@ -1,9 +1,8 @@
 <template>
-	<div class="container">
-		
-			<h1 style="font-size: 2.4rem;">Ingresa tus datos para que comencemos...</h1>
-			<hr>	
-			<div class="columns">
+	<div class="login--wrapper">
+		<h1 style="font-size: 2.4rem; text-align: center;">Iniciar Sesión</h1>
+				
+			<div class="columns login--card">
 				<div class="column">
 						
 					<form action="#" @submit.prevent="login">
@@ -31,20 +30,34 @@
 				            </b-input>
 				        </b-field>
 				        
-						
-					    <small id="emailHelp" class="form-text text-muted">Recuerda no compartir tu información con nadie.</small>
+						<div class="alert-message">
+							{{alertMessage}}
+						</div>
+					    
 					    <br>
 					    <hr>
-					  <b-button native-type="submit" type="is-success" icon-right="earth">Iniciar Sesion</b-button>
+					  <b-button outlined expanded :loading="loading" style="display: block;" native-type="submit" type="is-success is-medium" icon-right="earth">Iniciar Sesion</b-button>
 
 					</form>
+
+					
 				</div>
 
 				<div class="column">
-					Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sequi porro quidem nihil eum, tempora consequatur quas dolorem blanditiis. Ab quaerat expedita eius magnam cumque incidunt esse, voluptates laborum accusantium maiores.
+					<ul>
+						<li>CANTVACP te permite mantener un control presupuestario.</li>
+					</ul>
+					<router-link :to="{ path: '/register' }">¿No tienes cuenta?</router-link>
+					<img src="" alt="">
 				</div>
 			</div>
-		
+
+			<div>
+				<p style="margin: 5%; text-align: center;">
+					Bienvenido! Recuerda no compartir tus credenciales con cualquiera.
+				</p>
+			</div>
+			
 	</div>
 </template>
 
@@ -57,19 +70,51 @@
 			return {
 				username: '',
 				password: '',
+				alertMessage: '',
+				loading: false
 			}
 		},
 		methods: {
 			login(){
 
+				this.alertMessage = "";
+				this.loading = true;
 				this.$store.dispatch('retrieveToken',{
 					username: this.username,
 					password: this.password
 				})
 				.then(response=>{
+					this.loading = false;
 					this.$router.push({name: 'controlPanel'})
 				})
+				.catch(err=>{
+					this.loading = false;
+					this.alertMessage = "Tus credenciales son incorrectas."
+				});
 			}
 		}
 	}
 </script>
+
+<style>
+	
+	.login--wrapper{
+		padding: 10px;
+		background: rgb(89,144,122);
+		color: white;
+	}
+
+	.login--card{
+		margin: 2% 15%;
+		padding: 20px;
+		background: white;
+		color: grey;
+		box-shadow: 0px 2px 10px rgba(33,33,33,0.3);
+		border-radius: 0px;
+
+	}
+	.alert-message{
+		color: red;
+	}
+
+</style>

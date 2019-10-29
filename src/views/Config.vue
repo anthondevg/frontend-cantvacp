@@ -5,7 +5,6 @@
 			<h1 style="font-size: 2em; margin-bottom: 10px;">Configuracion</h1>
 			
 			<div class="columns card">
-				
 				<div class="column">
 					<form action="POST" @submit.prevent="setConfig">
 						<b-field label="Descuento de Responsabilidad Empresa" expanded>
@@ -29,15 +28,22 @@
 						<b-field>
 					            <div class="control">
 					                <b-switch 
-								v-on:click="toggleDOLAR_OFFLINE" v-model="DOLAR_OFFLINE">Usar valor del Dolar Offline</b-switch>
+								 v-model="DOLAR_OFFLINE">Usar valor del Dolar Offline</b-switch>
 					            </div>
 					        </b-field>
+
+				<div>Valor del dolar: {{this.$store.getters.config_DOLAR}} BsS
+				<span v-if="!DOLAR_OFFLINE"> | (DolarToday)</span>
+				<span v-else>| (Offline)</span>
+				</div>
 						<b-button native-type="submit" type="is-link" icon-right="earth">Guardar</b-button>
 					</form>
 				</div>
 
 			</div>
 		</div>
+
+
 	</div>
 </template>
 
