@@ -1,4 +1,13 @@
-# front-cantv2
+# Budgets Control
+
+An application to have a control of budgets, expenses and advances in an enterprise.
+
+	- Vue.js
+	- Vuex
+	- Vue Router
+	- Buefy
+	- Laravel
+	- Laravel Passport
 
 ## Project setup
 ```
@@ -14,16 +23,3 @@ npm run serve
 ```
 npm run build
 ```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
