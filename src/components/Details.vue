@@ -2,7 +2,7 @@
 	<div class="details-card">
 		<b-button 
 				@click="toggle()"
-				type="is-default"
+				type="is-dark"
 	            icon-right="eye">Ver Detalles</b-button>
 
 		<transition name="fade">
@@ -23,18 +23,16 @@
 				</div>
 				
 		    	<div class="detail">
-					<span class="badge badge--smaller badge--danger">
-    				
+					
 					<label>Descuento RSE </label>
-					{{ parseInt(budget.DRSE) | formattedNumber}}</span>
+					{{ parseInt(budget.DRSE) | formattedNumber}}
 				</div>
 
 				<div class="detail">
-					<span class="badge badge--smaller badge--danger">
-    				
+					
 					<label>Descuento EPS </label>
 						{{ parseInt(budget.DEPS) | formattedNumber}}
-    				</span>
+    			
 				</div>
 
 		</div>
@@ -67,7 +65,7 @@
 
 <style>
 	.details-card{
-		background: rgba(33,33,150,0.9);
+		background: #53dd6c;
 	    color: white;
 	    margin-bottom: 10px;
 	    padding: 10px;

@@ -7,11 +7,6 @@
 </template>
 
 <script>
-	import axios from 'axios'
-
-	// setting up the endpoint !!!!!!!
-	axios.defaults.baseURL = process.env.VUE_APP_API_ENDPOINT;
-
 	export default {
 		name: 'selectTypes',
 		data(){
@@ -21,7 +16,7 @@
 		},
 
 		created: function(){
-			axios.get('/type')
+			this.$http.get('/type')
 				.then(res=>{
 					this.types = res.data
 				})

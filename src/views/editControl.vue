@@ -1,11 +1,8 @@
 <template>
-	<div class="container">
+	<div class="container form-container">
 
-		
 		<div class="desc-card">
-			
-			<h1 class="desc-title">Editar Control</h1>
-			         
+			<h1 class="desc-title">Editar Control</h1>      
 		</div>
 		
 		<div class="card" style="padding: 20px;">
@@ -118,17 +115,6 @@
 
 <style>
 
-	.desc-card{
-		background: linear-gradient(left, rgb(33,33,133), rgb(33,33,199));
-	    color: white;
-	    margin-bottom: 10px;
-	    padding: 10px;
-	    display: flex;
-	    border-radius: 5px;
-	    font-size: 1.5em;
-	    justify-content: space-between;
-	    align-items: center;
-	}
 	.edit--canvas{
 		margin: 0 auto;
 		width: 100%;

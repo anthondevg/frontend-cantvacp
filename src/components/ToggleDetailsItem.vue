@@ -8,7 +8,7 @@
 			   		
 			<div class="fancy-card card">
 
-				<h3 class="div-actions-title">
+				<h3 style="font-size: 2.2rem; color: darkgrey;" class="div-actions-title">
 					Gastos
 				</h3>
 
@@ -52,7 +52,7 @@
 				<div>
 					<transition name="fade">
 						
-						<table v-if="sExpenses.length > 0" class="table is-bordered is-striped is-hoverable" style="width: 100%; margin-top: 6px; margin-bottom: 6px; border-radius: 5px;">
+						<table v-if="expenses.length > 0" class="table is-bordered is-striped is-hoverable" style="width: 100%; margin-top: 6px; margin-bottom: 6px; border-radius: 5px;">
 		  
 		  				<thead>
 			    			<th scope="col">Descripcion</th>
@@ -61,7 +61,7 @@
 			      
 		    			</thead>
 						
-		    			<tbody v-for="expense in sExpenses">
+		    			<tbody v-for="expense in expenses">
 		    				<tr>
 		    					<td>{{expense.description}}</td>
 		    					<td>
@@ -80,16 +80,17 @@
 		    		</table>
 					</transition>
 
-					<div class="no-expenses-card" v-if="sExpenses == 0">
+					<div class="no-expenses-card" v-if="expenses == 0">
 						<b-icon style="color: white;" icon="medal"></b-icon>
 	                
 	    				<h3 style="font-size: 2rem; color: white;">
 	    				No tienes gastos!
 	    				</h3>
 		    		</div>
+
 				</div>
 				<ResumeDetails 
-				:sExpenses="sExpenses"
+				:expenses="expenses"
 				:budgetIncome="budgetIncome"
 				/>
 			</div>
@@ -100,12 +101,8 @@
 
 <script>
 
-	import axios from 'axios'
 	import Details from './Details.vue';
 	import ResumeDetails from './ResumeDetails.vue';
-
-	// setting up the endpoint !!!!!!!
-	axios.defaults.baseURL = process.env.VUE_APP_API_ENDPOINT;
 
 	export default {
 		name: 'toggle-details-item',
@@ -113,13 +110,12 @@
 		data(){
 			return {
 				type: 'ALL',
-				budget_Id: this.$props.budget.id,
 				control_Id: this.$store.getters.current_control_id,
 				user_Id: this.$store.getters.user_id,
 				description: '',
 				amount: '',
-				sExpenses: this.$props.expenses,
-				addingExpense: false
+				addingExpense: false,
+				sExpenses: this.expenses
 			}
 		},
 		components: {
@@ -131,23 +127,22 @@
 				this.addingExpense = !this.addingExpense;
 			},
 			addExpense(){
-				axios.post('/expense',{
+				this.$http.post('/expense',{
 					user_Id: this.user_Id,
-					budget_Id: this.budget_Id,
+					budget_Id: this.$props.budget.id,
 					control_Id: this.control_Id,
 		            description: this.description,
 		            amount: parseInt(this.amount)
 		          })
 		          .then(res=>{
-		          	this.sExpenses.push({
+		          	this.expenses.push({
 		          		id: res.data.id,
 			        	user_Id: res.data.user_Id,
 						budget_Id: res.data.budget_id,
 						control_Id: res.data.control_id,
 			            description: res.data.description,
 			            amount: parseInt(res.data.amount)
-
-			       	})
+			       	});
 		          	
 					this.$store.dispatch('fetchExpenses',{
 						control_id: this.$store.getters.current_control_id
@@ -166,13 +161,13 @@
 		          })
 			},
 			deleteExpense(id){
-				axios.post('/expense/delete',{
+				this.$http.post('/expense/delete',{
 					id: id,
 		          })
 		          .then(res=>{
-		          	let newExpenses = this.sExpenses.filter(expense => expense.id != id);
+		          	let newExpenses = this.expenses.filter(expense => expense.id != id);
 
-						this.sExpenses = newExpenses;
+						this.expenses = newExpenses;
 						console.log(res)
 		            console.log(res);
 		          })
@@ -193,7 +188,7 @@
 
 	.no-expenses-card{
 		padding: 10px;
-		background: rgba(33,33,150,0.9);
+		background: #53dd6c;
 	    margin: 10px 1px;
 		min-height: 100px;
 		width: 100%;

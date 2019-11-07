@@ -112,13 +112,7 @@ export default new Vuex.Store({
       }else{
         console.log('seteando valor api')
         
-        axios.get('https://s3.amazonaws.com/dolartoday/data.json',{
-          mode: 'no-cors',
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Content-Type': 'application/json',
-          },
-        })
+        axios.get('https://s3.amazonaws.com/dolartoday/data.json')
           .then(res=>{
             let d = res.data.USD.dolartoday;
             localStorage.setItem('DOLAR',d);

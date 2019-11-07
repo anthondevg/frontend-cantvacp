@@ -186,7 +186,7 @@
 		name: 'editBudget',
 		data() {
 			return {
-				userId: '2',
+				userId: this.$store.getters.user_id,
 				nroOrder: '',
 				nroInvoice: '',
 				totalAmount: 0,
@@ -304,43 +304,3 @@
 		}
 	}
 </script>
-
-<style>
-	
-	.form-container{
-		background-color: white;
-		box-shadow: 0px 1px 10px rgba(33,33,33,0.2);
-		border-radius: 3px;
-		margin-top: 20px;
-		margin-bottom: 20px;
-	}
-
-	.desc-card{
-		background: linear-gradient(left, rgb(33,33,133), rgb(33,33,199));
-	    color: white;
-	    margin-bottom: 10px;
-	    padding: 10px;
-	    display: flex;
-	    justify-content: space-between;
-	    align-items: center;
-	}
-	.desc-icon{
-		background-color: white;
-		font-size: 2rem;
-		color: rgb(33,33,133);
-		border-radius: 100px;
-		padding: 20px;
-	}
-	.desc-title{
-		font-size: 2em;
-	}
-
-	.inner-form--wrapper{
-		padding: 20px;
-	}
-	.save-button{
-		font-size: 1.4rem; width: 30%;
-		background: linear-gradient(left, rgb(33,33,133), rgb(33,33,199));
-	    
-	}
-</style>

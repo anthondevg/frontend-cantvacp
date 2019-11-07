@@ -1,17 +1,17 @@
 <template>
 	<div style="display: flex;">
-    	<div class="card status-box"> 
-    		<b-icon icon="check">
+    	<div class="card status-box is-success"> 
+    		<b-icon icon="checkbox-marked-circle-outline">
     		</b-icon>
 			 <p>{{completedBudgets}}</p>
 		</div>
-		<div class="card status-box" style="background: orange;"> 
-    		<b-icon icon="earth">
+		<div class="card status-box is-info"> 
+    		<b-icon icon="clock-outline">
     		</b-icon>
 			 <p>{{pendingBudgets}}</p>
 		</div>
-		<div class="card status-box" style="background: red;"> 
-    		<b-icon icon="ghost">
+		<div class="card status-box is-danger"> 
+    		<b-icon icon="close-circle">
     		</b-icon>
 			 <p>{{cancelledBudgets}}</p>
 		</div>

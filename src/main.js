@@ -7,6 +7,7 @@ import VuePageTransition from 'vue-page-transition'
 import Buefy from 'buefy';
 import 'buefy/dist/buefy.css';
 import Axios from 'axios';
+import "./styles.scss";
 // setting up the endpoint !!!!!!!
 Axios.defaults.baseURL = process.env.VUE_APP_API_ENDPOINT;
 

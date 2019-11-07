@@ -100,7 +100,7 @@
 	
 	.login--wrapper{
 		padding: 10px;
-		background: rgb(89,144,122);
+		background: #53dd6c;
 		color: white;
 	}
 

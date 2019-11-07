@@ -1,12 +1,12 @@
 <template>
 	<div id="app">
 
-	    <b-navbar>
+	    <b-navbar type="is-white" class="navbar-main" >
 
 	        <template slot="brand">
 	            <b-navbar-item tag="router-link" :to="{ path: '/' }">
 	                <img
-	                    src="https://upload.wikimedia.org/wikipedia/commons/c/c7/Cantv_logo.PNG"
+	                    src="https://i.postimg.cc/L5vjw98z/logo-sumptify-supreme.png"
 	                    alt="Sistema de Cantv para llevar contabilidad de Presupuestos y demas hecho por Robwert Mota"
 	                >
 	            </b-navbar-item>
@@ -42,7 +42,7 @@
 	        <template slot="end">
 	            <b-navbar-item tag="div">
 	                <div class="buttons">
-	                    <a v-if="!loggedIn" style="color: white;" class="button is-link">
+	                    <a v-if="!loggedIn" style="color: white;" class="button is-info">
 	                        <router-link style="color: white;" to="/login">
 
 	               		Iniciar Sesion</router-link>
@@ -84,5 +84,13 @@
 	
 	html,body{
 		overflow-x: hidden;
+	}
+
+	.navbar-main{
+		font-size: 1.2rem; height: 15vh;
+		transition: all ease .2s;
+		box-shadow: 0px 2px 4px rgba(33,33,33,0.2);
+	}
+	.navbar-main:hover{
 	}
 </style>

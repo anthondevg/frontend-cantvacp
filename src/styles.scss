@@ -1,0 +1,70 @@
+// Import Bulma's core
+@import "~bulma/sass/utilities/_all";
+
+// Set your colors
+$primary: #53dd6c;
+$primary-invert: findColorInvert($primary);
+$success: #53dd6c;
+$info: #17bebb;
+$twitter: #4099FF;
+$twitter-invert: findColorInvert($twitter);
+$dark: #2e282a;
+
+// Setup $colors to use as bulma classes (e.g. 'is-twitter')
+$colors: (
+    "white": ($white, $black),
+    "link": ($primary,$white),
+    "black": ($black, $white),
+    "light": ($light, $light-invert),
+    "dark": ($dark, $dark-invert),
+    "primary": ($primary, $primary-invert),
+    "info": ($info, $info-invert),
+    "success": ($success, $success-invert),
+    "warning": ($warning, $warning-invert),
+    "danger": ($danger, $danger-invert),
+    "twitter": ($twitter, $twitter-invert)
+);
+
+// Links
+$link: $primary;
+$link-invert: $primary-invert;
+$link-focus-border: $primary;
+
+// Import Bulma and Buefy styles
+@import "~bulma";
+@import "~buefy/src/scss/buefy";
+
+.form-container{
+    background-color: white;
+    box-shadow: 0px 1px 10px rgba(33,33,33,0.2);
+    border-radius: 3px;
+    margin-top: 20px;
+    padding: 20px;
+}
+
+.desc-card{
+    background: linear-gradient(to left, #53dd6c, #17bebb);
+    color: white;
+    margin-bottom: 10px;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.desc-icon{
+    background-color: white;
+    font-size: 2rem;
+    color: #17bebb;
+    border-radius: 100px;
+    padding: 20px;
+}
+.desc-title{
+    font-size: 2em;
+}
+
+.inner-form--wrapper{
+    padding: 20px;
+}
+.save-button{
+    font-size: 1.4rem; width: 30%;
+}

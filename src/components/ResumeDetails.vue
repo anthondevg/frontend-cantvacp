@@ -38,11 +38,11 @@
 <script>
 	export default{
 		name: 'ResumeDetails',
-		props: ['sExpenses','budgetIncome'],
+		props: ['expenses','budgetIncome'],
 		computed:{
 			totalExpense(){
 				let total = 0;
-				this.sExpenses.forEach(expenses=>{
+				this.expenses.forEach(expenses=>{
 					total += parseInt(expenses.amount);
 				});
 
@@ -81,10 +81,10 @@
 	}
 
 	.resume-card--success{
-		color: rgb(33,233,199);
-		border-color: rgb(33,233,199);
+		color: #53dd6c;
+		border-color: #53dd6c;
 	}
 	.resume-card--danger{
-		background: linear-gradient(left, rgb(233,111,133), rgb(133,133,100));
+		background: linear-gradient(to left, rgb(233,111,133), rgb(133,133,100));
 	}
 </style>

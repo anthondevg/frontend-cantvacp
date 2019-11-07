@@ -8,6 +8,7 @@
 				type="is-default"
 	            icon-right="eye" />
 		</td>
+		
     	<td>{{budget.id}}</td>
     	<td>{{ budget.description}}</td>
     	

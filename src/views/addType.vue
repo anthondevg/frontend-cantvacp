@@ -1,20 +1,27 @@
 <template>
-	<div class="container">
+	<div class="container form-container" style="margin-bottom: 50px;">
+		<div class="desc-card">
+			<h1 class="desc-title">Agregar Tipo</h1>
+			<b-icon icon="earth" class="desc-icon"></b-icon>  
+		</div>
+
+		<form method="POST" class="needs-validation inner-form--wrapper" @submit.prevent="newType">
 		
-		<h1>Agregar nuevo Tipo </h1>	
+			<div class="column">
+		        <b-field label="Nombre" label-position="on-border" expanded>
+		            <b-input 
+		            	required
+		            	placeholder="p.Ej: ACME"
+		            	type="text" 
+		            	native.type="text"
+		            	icon="pencil" 
+		            	name="name" 
+		            	v-model="name">		
+		           	</b-input>
+		        </b-field>
+			</div>
 
-		<hr>
-
-		<form method="POST" class="needs-validation" @submit.prevent="newType">
-		
-		    <div class="col-md-12 mb-3">
-		      <label>Nombre</label>
-
-		      	<input type="text" name="name" autofocus v-model="name" class="form-control" id="validationCustom01" placeholder="CANTV" required>
-		     
-		    </div>
-			<hr>
-		  <button class="btn btn-primary" type="submit">Agregar Tipo</button>
+		  <b-button native-type="submit" type="is-success" icon-right="pencil" class="save-button">Guardar</b-button>
 		</form>
 	</div>
 </template>
@@ -41,7 +48,7 @@
 					name: this.name
 				})
 				.then(response=>{
-					this.$router.push({name: 'dashboard'})
+					this.$router.push({path: `/control/${this.$store.getters.current_control_id}`})
 				})
 				.catch(err=>{
 					console.log('error, ',err);

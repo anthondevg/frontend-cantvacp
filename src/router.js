@@ -114,6 +114,14 @@ export default new Router({
       }
     },
     {
+      path: '/anticipo/:id', 
+      name: 'editAdvance', 
+      component: () => import(/* webpackChunkName: "logout" */ './views/editAdvance.vue')
+      ,meta: {
+        requiresAuth: true
+      }
+    },
+    {
       path: '/editar/control/:id',
       name: 'editControl',
       component: () => import(/* webpackChunkName: "login" */ './views/editControl.vue'),meta: {

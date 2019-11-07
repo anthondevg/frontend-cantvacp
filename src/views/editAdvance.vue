@@ -2,12 +2,12 @@
 	<div class="container form-container">
 		
 		<div class="desc-card">
-			<h1 class="desc-title">Nuevo Anticipo</h1>
-			<b-icon icon="earth" class="desc-icon"></b-icon>          
+			<h1 class="desc-title">Editar Anticipo</h1>
+			<b-icon icon="earth" class="desc-icon"></b-icon>
 		</div>
 
 			<template >
-				<form method="POST" class="inner-form--wrapper" @submit.prevent="newAdvance">
+				<form method="POST" class="inner-form--wrapper" @submit.prevent="updateAdvance">
 					<div class="columns">
 
 						<div class="column">
@@ -164,17 +164,12 @@
 	</div>
 </template>
 
-
 <script>
-	import axios from 'axios'
 	import {Money} from 'v-money'
 
-	// setting up the endpoint !!!!!!!
-	axios.defaults.baseURL = process.env.VUE_APP_API_ENDPOINT;
-
-	export default {
-		name: 'newAdvance',
-		data() {
+	export default{
+		name: 'editAdvance',
+		data(){
 			return {
 				userId: this.$store.getters.user_id,
 				nroOrder: '',
@@ -228,27 +223,64 @@
 				this.descRSE = this.totalAmount * (this.$store.getters.config_DRSE/100);
 				this.descEPS = this.totalAmount * (this.$store.getters.config_DEPS/100);
 			},
-			newAdvance(){
-				console.log('new advance in ')
+			updateAdvance(){
+				console.log('update advance')
 
-				axios.post('/advance',{
+				this.$http.post('/advance/update',{
+					id: this.$route.params.id,
 					user_Id: this.userId,
 					control_Id: this.control_Id,
-					type: this.type,
 					nroOrder: new Number(this.nroOrder),
 					nroInvoice: new Number(this.nroInvoice),
-					date: this.date,
-					description: this.description,
-					status: this.status,
 					totalAmount: new Number(this.totalAmount),
-					DRSE: new Number(this.descRSE),
-					DEPS: new Number(this.descEPS)
+					description: this.description,
+					date: this.date,
+					status: this.status,
+					type: this.type,
+					DRSE: this.descRSE,
+					DEPS: this.descEPS
 				})
 				.then(response=>{
-					this.$router.push({path: `/control/${this.$store.getters.current_control_id}`})
+					this.$router.push({path: `/control/${this.$store.getters.current_control_id}#advances`})
 				})
 			}
+		},
+		created: function(){
+			this.$http.post('/advance/getById',{
+				id: this.$route.params.id
+			})
+			.then(res=>{
 
+				let d = res.data;
+				this.nroOrder = d.nroOrder;
+				this.nroInvoice = d.nroInvoice;
+				this.totalAmount = d.totalAmount;
+				this.description = d.description;
+				this.date = d.date;
+				this.status = d.status;
+				this.type = d.type;
+				this.descRSE = d.DRSE;
+				this.descEPS = d.DEPS;
+				this.totalIncome = d.totalIncome;
+
+				console.log(res)
+			})
+			.catch(err=>{
+				console.log(err)
+			})
+
+			this.$http.get(`/type/id/${this.$store.getters.user_id}`)
+			  .then(res=> {
+			    // handle success
+
+				this.type = res.data[0].code
+			    this.types = res.data;
+			    console.log(res.data);
+			  })
+			  .catch(function (error) {
+			    // handle error
+			    console.log(error);
+			  })
 		}
 	}
 </script>
